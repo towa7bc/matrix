@@ -41,7 +41,7 @@ int main() {
   // res2(1, 1) = 0;
   res1 = m1 * m2;
   // res2 = m1 + m2;
-  res2 = m1 * scalar;
+  res2 = std::move(m1) * scalar;
   resVec = vec1 + vec2;
   res = vec1 * vec2;
   auto d = cross(crossVec, crossVec2);

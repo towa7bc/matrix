@@ -1,7 +1,3 @@
-//
-// Created by Michael Wittmann on 16/06/2020.
-//
-
 #ifndef MATRIX_VECTOR_HPP
 #define MATRIX_VECTOR_HPP
 

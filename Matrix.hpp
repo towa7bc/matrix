@@ -33,6 +33,27 @@ class Matrix {
   /// multiply two matrices
   inline friend Matrix<T> operator*(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
+    if (matrix1.cols_ != matrix2.rows_) {
+      throw BadDimensionException(
+          "matrix1.cols has to be the same as matrix2.rows");
+    }
+    Matrix<T> result(matrix1.rows_, matrix1.cols_);
+    for (auto i = 0; i < matrix1.rows_; ++i) {
+      for (auto j = 0; j < matrix1.cols_; ++j) {
+        for (auto k = 0; k < matrix1.cols_; ++k) {
+          result(i, j) += matrix1(i, k) * matrix2(k, j);
+        }
+      }
+    }
+    return result;
+  }
+
+  /// multiply two matrices movable
+  inline friend Matrix<T> operator*(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
+    if (matrix1.cols_ != matrix2.rows_) {
+      throw BadDimensionException(
+          "matrix1.cols has to be the same as matrix2.rows");
+    }
     Matrix<T> result(matrix1.rows_, matrix1.cols_);
     for (auto i = 0; i < matrix1.rows_; ++i) {
       for (auto j = 0; j < matrix1.cols_; ++j) {
@@ -47,6 +68,10 @@ class Matrix {
   /// multiply a matrix and a vector
   inline friend Vector<T> operator*(const Matrix<T>& matrix,
                                     const Vector<T>& vector) {
+    if (matrix.cols_ != vector.rows_) {
+      throw BadDimensionException(
+          "matrix.cols has to be the same as the vector dimension.");
+    }
     Vector<T> result(vector.rows_);
     for (auto i = 0; i < matrix.rows_; ++i) {
       for (auto j = 0; j < matrix.cols_; ++j) {
@@ -58,6 +83,39 @@ class Matrix {
   /// multiply a transposed vector and a matrix
   inline friend Vector<T> operator*(const Vector<T>& vector,
                                     const Matrix<T>& matrix) {
+    if (matrix.rows_ != vector.rows_) {
+      throw BadDimensionException(
+          "matrix.rows has to be the same as the vector dimension.");
+    }
+    Vector<T> result(vector.rows_);
+    for (auto i = 0; i < matrix.rows_; ++i) {
+      for (auto j = 0; j < matrix.cols_; ++j) {
+        result(i) += vector(i) * matrix(i, j);
+      }
+    }
+    return result;
+  }
+
+  /// multiply a matrix and a vector movable
+  inline friend Vector<T> operator*(Matrix<T>&& matrix, Vector<T>&& vector) {
+    if (matrix.cols_ != vector.rows_) {
+      throw BadDimensionException(
+          "matrix.cols has to be the same as the vector dimension.");
+    }
+    Vector<T> result(vector.rows_);
+    for (auto i = 0; i < matrix.rows_; ++i) {
+      for (auto j = 0; j < matrix.cols_; ++j) {
+        result(i) += matrix(i, j) * vector(j);
+      }
+    }
+    return result;
+  }
+  /// multiply a transposed vector and a matrix movable
+  inline friend Vector<T> operator*(Vector<T>&& vector, Matrix<T>&& matrix) {
+    if (matrix.rows_ != vector.rows_) {
+      throw BadDimensionException(
+          "matrix.rows has to be the same as the vector dimension.");
+    }
     Vector<T> result(vector.rows_);
     for (auto i = 0; i < matrix.rows_; ++i) {
       for (auto j = 0; j < matrix.cols_; ++j) {
@@ -85,9 +143,46 @@ class Matrix {
     return result;
   }
 
+  /// multiply a scalar with a matrix movable
+  inline friend Matrix<T> operator*(T scalarValue, Matrix<T>&& matrix) {
+    Matrix<T> result(matrix.rows_, matrix.cols_);
+    for (auto i = 0; i < matrix.rows_; ++i) {
+      for (auto j = 0; j < matrix.cols_; ++j) {
+        result(i, j) = scalarValue * matrix(i, j);
+      }
+    }
+    return result;
+  }
+
+  /// multiply a matrix with a scalar movable
+  inline friend Matrix<T> operator*(Matrix<T>&& matrix, T scalarValue) {
+    Matrix<T> result(matrix.rows_, matrix.cols_);
+    result = scalarValue * matrix;
+    return result;
+  }
+
   /// add two matrices
   inline friend Matrix<T> operator+(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
+    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
+      throw BadDimensionException("The matrix dimensions have to be the same.");
+    }
+    Matrix<T> result(matrix1.rows_, matrix1.cols_);
+    for (auto i = 0; i < matrix1.rows_; ++i) {
+      for (auto j = 0; j < matrix1.cols_; ++j) {
+        for (auto k = 0; k < matrix1.cols_; ++k) {
+          result(i, j) = matrix1(i, k) + matrix2(k, j);
+        }
+      }
+    }
+    return result;
+  }
+
+  /// add two matrices movable
+  inline friend Matrix<T> operator+(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
+    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
+      throw BadDimensionException("The matrix dimensions have to be the same.");
+    }
     Matrix<T> result(matrix1.rows_, matrix1.cols_);
     for (auto i = 0; i < matrix1.rows_; ++i) {
       for (auto j = 0; j < matrix1.cols_; ++j) {

@@ -52,6 +52,9 @@ class Vector {
   /// vector addition
   inline friend Vector<T> operator+(const Vector<T>& vector1,
                                     const Vector<T>& vector2) {
+    if (vector1.rows_ != vector2.rows_) {
+      throw BadDimensionException("The vector dimensions have to be the same.");
+    }
     Vector<T> result(vector1.rows_);
     for (auto i = 0; i < vector1.rows_; ++i) {
       result(i) = vector1(i) + vector2(i);
@@ -61,6 +64,9 @@ class Vector {
 
   /// vector addition movable
   inline friend Vector<T> operator+(Vector<T>&& vector1, Vector<T>&& vector2) {
+    if (vector1.rows_ != vector2.rows_) {
+      throw BadDimensionException("The vector dimensions have to be the same.");
+    }
     Vector<T> result(vector1.rows_);
     for (auto i = 0; i < vector1.rows_; ++i) {
       result(i) = vector1(i) + vector2(i);
@@ -71,6 +77,9 @@ class Vector {
   /// scalar multiplication
   inline friend T operator*(const Vector<T>& vector1,
                             const Vector<T>& vector2) {
+    if (vector1.rows_ != vector2.rows_) {
+      throw BadDimensionException("The vector dimensions have to be the same.");
+    }
     T result;
     for (auto i = 0; i < vector1.rows_; ++i) {
       result += vector1(i) * vector2(i);
@@ -80,6 +89,9 @@ class Vector {
 
   /// scalar multiplication movable
   inline friend T operator*(Vector<T>&& vector1, Vector<T>&& vector2) {
+    if (vector1.rows_ != vector2.rows_) {
+      throw BadDimensionException("The vector dimensions have to be the same.");
+    }
     T result;
     for (auto i = 0; i < vector1.rows_; ++i) {
       result += vector1(i) * vector2(i);

@@ -1,8 +1,8 @@
 #include <iostream>
 #include <type_traits>
 
+//#include "Vector.hpp"
 #include "Matrix.hpp"
-#include "Vector.hpp"
 
 int main() {
   libmatrix::Matrix<float> m1(2, 2);
@@ -39,16 +39,16 @@ int main() {
   // res2(0, 1) = 0;
   // res2(1, 0) = 0;
   // res2(1, 1) = 0;
-  // res1 = m1 * m2;
-  // res2 = m1 + m2;
-  res2 = m1 * scalar;
-  // resVec = vec1 + vec2;
-  // res = vec1 * vec2;
-  // auto d = cross(crossVec, crossVec2);
+  res1 = m1 * m2;
+  res2 = m1 + m2;
+  // res2 = m1 * scalar;
+  resVec = vec1 + vec2;
+  res = vec1 * vec2;
+  auto d = cross(crossVec, crossVec2);
   std::cout << res2(1, 1) << '\n';
-  // std::cout << res2(1, 1) << '\n';
-  // std::cout << resVec(1) << '\n';
-  // std::cout << res << '\n';
-  // std::cout << d(0) << '\n';
+  std::cout << res2(1, 1) << '\n';
+  std::cout << resVec(1) << '\n';
+  std::cout << res << '\n';
+  std::cout << d(0) << '\n';
   return 0;
 }

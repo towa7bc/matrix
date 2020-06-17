@@ -18,17 +18,19 @@ using uint = unsigned int;
 template <typename T>
 class Matrix {
  public:
-  Matrix() : data_(new T[0]){};
+  Matrix();
   Matrix(const Matrix<T>& /*other*/);
-  Matrix<T>& operator=(const Matrix<T>&);
+  Matrix<T>& operator=(const Matrix<T>& /*other*/);
   Matrix(Matrix<T>&& /*other*/) noexcept;
-  Matrix<T>& operator=(Matrix<T>&&) noexcept;
+  Matrix<T>& operator=(Matrix<T>&& /*other*/) noexcept;
   Matrix(uint rows, uint cols);
   ~Matrix() noexcept;
 
   bool exists(uint row, uint col) const;
   T& operator()(uint row, uint col);
   T operator()(uint row, uint col) const;
+
+  /// multiply two matrices
   inline friend Matrix<T> operator*(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
     Matrix<T> result(matrix1.rows_, matrix1.cols_);
@@ -42,6 +44,7 @@ class Matrix {
     return result;
   }
 
+  /// multiply a matrix and a vector
   inline friend Vector<T> operator*(const Matrix<T>& matrix,
                                     const Vector<T>& vector) {
     Vector<T> result(vector.rows_);
@@ -52,7 +55,19 @@ class Matrix {
     }
     return result;
   }
+  /// multiply a transposed vector and a matrix
+  inline friend Vector<T> operator*(const Vector<T>& vector,
+                                    const Matrix<T>& matrix) {
+    Vector<T> result(vector.rows_);
+    for (auto i = 0; i < matrix.rows_; ++i) {
+      for (auto j = 0; j < matrix.cols_; ++j) {
+        result(i) += vector(i) * matrix(i, j);
+      }
+    }
+    return result;
+  }
 
+  /// multiply a scalar with a matrix
   inline friend Matrix<T> operator*(T scalarValue, const Matrix<T>& matrix) {
     Matrix<T> result(matrix.rows_, matrix.cols_);
     for (auto i = 0; i < matrix.rows_; ++i) {
@@ -63,12 +78,14 @@ class Matrix {
     return result;
   }
 
+  /// multiply a matrix with a scalar
   inline friend Matrix<T> operator*(const Matrix<T>& matrix, T scalarValue) {
     Matrix<T> result(matrix.rows_, matrix.cols_);
     result = scalarValue * matrix;
     return result;
   }
 
+  /// add two matrices
   inline friend Matrix<T> operator+(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
     Matrix<T> result(matrix1.rows_, matrix1.cols_);
@@ -91,6 +108,10 @@ class Matrix {
   mutable T* data_;
 };
 
+template <typename T>
+Matrix<T>::Matrix() : data_(new T[0]) {
+  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
+}
 template <typename T>
 Matrix<T>::Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
@@ -133,6 +154,7 @@ Matrix<T>::~Matrix() noexcept {
 template <typename T>
 Matrix<T>::Matrix(const Matrix<T>& other) {
   // std::cout << "copy constructor";
+  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   data_ = new T[other.rows_ * other.cols_];
   *data_ = *other.data_;
 }
@@ -152,6 +174,7 @@ Matrix<T>::Matrix(Matrix<T>&& other) noexcept
       rows_(std::move(other.rows_)),
       cols_(std::move(other.cols_)) {
   // std::cout << "move constructor";
+  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   other.data_ = nullptr;
   other.rows_ = 0;
   other.cols_ = 0;

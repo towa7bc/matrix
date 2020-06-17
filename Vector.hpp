@@ -39,15 +39,17 @@ using uint = unsigned int;
 template <typename T>
 class Vector {
  public:
-  Vector() : data_(new T[0]){};
-  explicit Vector(uint rows);
+  Vector();
+  explicit Vector(uint /*rows*/);
   Vector(const Vector<T>& /*other*/);
-  Vector<T>& operator=(const Vector<T>&);
+  Vector<T>& operator=(const Vector<T>& /*other*/);
   Vector(Vector<T>&& /*other*/) noexcept;
-  Vector<T>& operator=(Vector<T>&&) noexcept;
+  Vector<T>& operator=(Vector<T>&& /*other*/) noexcept;
   ~Vector() noexcept;
   T& operator()(uint row);
   T operator()(uint row) const;
+
+  /// vector addition
   inline friend Vector<T> operator+(const Vector<T>& vector1,
                                     const Vector<T>& vector2) {
     Vector<T> result(vector1.rows_);
@@ -57,6 +59,7 @@ class Vector {
     return result;
   }
 
+  /// vector addition movable
   inline friend Vector<T> operator+(Vector<T>&& vector1, Vector<T>&& vector2) {
     Vector<T> result(vector1.rows_);
     for (auto i = 0; i < vector1.rows_; ++i) {
@@ -65,6 +68,7 @@ class Vector {
     return result;
   }
 
+  /// scalar multiplication
   inline friend T operator*(const Vector<T>& vector1,
                             const Vector<T>& vector2) {
     T result;
@@ -74,6 +78,7 @@ class Vector {
     return result;
   }
 
+  /// scalar multiplication movable
   inline friend T operator*(Vector<T>&& vector1, Vector<T>&& vector2) {
     T result;
     for (auto i = 0; i < vector1.rows_; ++i) {
@@ -82,6 +87,7 @@ class Vector {
     return result;
   }
 
+  /// multiply a vector with a scalar value
   inline friend Vector<T> operator*(T scalarValue, const Vector<T>& vector) {
     Vector<T> result;
     for (auto i = 0; i < vector.rows_; ++i) {
@@ -90,18 +96,21 @@ class Vector {
     return result;
   }
 
+  /// multiply a vector with a scalar value
   inline friend Vector<T> operator*(const Vector<T>& vector, T scalarValue) {
     Vector<T> result;
     result = scalarValue * vector;
     return result;
   }
 
+  /// multiply a vector with a scalar value movable
   inline friend Vector<T> operator*(Vector<T>&& vector, T scalarValue) {
     Vector<T> result;
     result = scalarValue * vector;
     return result;
   }
 
+  /// multiply a vector with a scalar value movable
   inline friend Vector<T> operator*(T scalarValue, Vector<T>&& vector) {
     Vector<T> result;
     for (auto i = 0; i < vector.rows_; ++i) {
@@ -110,6 +119,7 @@ class Vector {
     return result;
   }
 
+  /// calculate the cross product of two 3d vectors
   inline friend Vector<T> cross(const Vector<T>& v1, const Vector<T>& v2) {
     std::cout << "cross copy";
     if (v1.rows_ != 3 || v2.rows_ != 3) {
@@ -123,6 +133,7 @@ class Vector {
     return result;
   }
 
+  /// calculate the cross product of two 3d vectors movable
   inline friend Vector<T> cross(Vector<T>&& v1, Vector<T>&& v2) {
     std::cout << "cross move";
     if (v1.rows_ != 3 || v2.rows_ != 3) {
@@ -142,6 +153,11 @@ class Vector {
   uint rows_{0};
   mutable T* data_;
 };
+
+template <typename T>
+Vector<T>::Vector() : data_(new T[0]) {
+  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
+}
 
 template <typename T>
 Vector<T>::Vector(uint rows) : rows_(rows) {
@@ -178,6 +194,7 @@ Vector<T>::~Vector() noexcept {
 template <typename T>
 Vector<T>::Vector(const Vector<T>& other) {
   // std::cout << "copy constructor";
+  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   data_ = new T[other.rows_];
   *data_ = *other.data_;
 }
@@ -193,6 +210,7 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
 template <typename T>
 Vector<T>::Vector(Vector<T>&& other) noexcept {
   // std::cout << "move constructor";
+  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   data_ = std::move(other.data_);
   rows_ = std::move(other.rows_);
   other.data_ = nullptr;

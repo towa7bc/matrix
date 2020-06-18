@@ -128,6 +128,8 @@ class Vector {
   std::unique_ptr<T[]> data_;
 };
 
+/// #region class implementation
+
 template <typename T>
 Vector<T>::Vector(uint rows) : rows_(rows) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
@@ -173,6 +175,10 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
   }
   return *this;
 }
+
+/// #endregion class implementation
+
+/// #region helper functions
 
 template <typename T>
 inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
@@ -250,6 +256,8 @@ inline Vector<T> add_vectors(const Vector<T>& vector1,
   }
   return result;
 }
+
+/// #endregion helper functions
 
 }  // namespace libMatrix::inline v1
 

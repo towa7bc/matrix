@@ -122,6 +122,8 @@ class Matrix {
   std::unique_ptr<T[]> data_;
 };
 
+/// #region class implementation
+
 template <typename T>
 Matrix<T>::Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
@@ -178,6 +180,10 @@ Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
   }
   return *this;
 }
+
+/// #endregion class implementation
+
+/// #region helper functions
 
 template <typename T>
 inline std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
@@ -293,6 +299,8 @@ inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
   }
   return result;
 }
+
+/// #endregion helper functions
 
 }  // namespace libMatrix::inline v1
 

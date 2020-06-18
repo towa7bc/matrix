@@ -183,7 +183,7 @@ class Vector {
   inline friend std::ostream& operator<<(std::ostream& out,
                                          const Vector<T>& v) {
     for (auto index{0}; index < v.rows_; ++index) {
-      out << '|' << v(index) << '|' << '\n';
+      out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
     }
     return out;
   }
@@ -191,7 +191,7 @@ class Vector {
   /// print a complete vector movable
   inline friend std::ostream& operator<<(std::ostream& out, Vector<T>&& v) {
     for (auto index{0}; index < v.rows_; ++index) {
-      out << '|' << v(index) << '|' << '\n';
+      out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
     }
     return out;
   }

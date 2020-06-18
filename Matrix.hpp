@@ -295,6 +295,7 @@ inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
   });
   return resultFuture.get();
 }
+
 template <typename T>
 inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
                                    const Matrix<T>& matrix2) {

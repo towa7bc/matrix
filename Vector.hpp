@@ -199,7 +199,7 @@ template <typename T>
 Vector<T>::Vector(const Vector<T>& other) {
   // std::cout << "copy constructor";
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-  data_ = new T[other.rows_];
+  data_ = std::make_unique<T[]>(other.rows_);
   *data_ = *other.data_;
 }
 
@@ -235,6 +235,6 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
   return *this;
 }
 
-}  // namespace libmatrix::inline v1
+}  // namespace libMatrix::inline v1
 
 #endif  // MATRIX_VECTOR_HPP

@@ -241,7 +241,7 @@ template <typename T>
 Matrix<T>::Matrix(const Matrix<T>& other) {
   // std::cout << "copy constructor";
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-  data_ = new T[other.rows_ * other.cols_];
+  data_ = std::unique_ptr<T[]>(other.rows_ * other.cols_);
   *data_ = *other.data_;
 }
 
@@ -282,6 +282,6 @@ Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
   return *this;
 }
 
-}  // namespace libmatrix::inline v1
+}  // namespace libMatrix::inline v1
 
 #endif  // MATRIX_MATRIX_HPP

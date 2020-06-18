@@ -16,16 +16,20 @@ template <typename T>
 class Matrix {
  public:
   Matrix() = delete;
+  explicit Matrix(uint /*rows*/, uint /*cols*/);
   Matrix(const Matrix<T>& /*other*/) = delete;
   Matrix<T>& operator=(const Matrix<T>& /*other*/) = delete;
   Matrix(Matrix<T>&& /*other*/) noexcept;
   Matrix<T>& operator=(Matrix<T>&& /*other*/) noexcept;
-  Matrix(uint rows, uint cols);
   ~Matrix() noexcept = default;
 
-  [[nodiscard]] bool exists(uint row, uint col) const;
-  T& operator()(uint row, uint col);
-  T operator()(uint row, uint col) const;
+  T& operator()(uint /*row*/, uint /*col*/);
+  T operator()(uint /*row*/, uint /*col*/) const;
+
+  [[nodiscard]] bool exists(uint /*row*/, uint /*col*/) const;
+  [[nodiscard]] int size() const { return rows_ * cols_; }
+  [[nodiscard]] int rows() const { return rows_; }
+  [[nodiscard]] int cols() const { return cols_; }
 
   /// multiply two matrices
   inline friend Matrix<T> operator*(const Matrix<T>& matrix1,
@@ -112,10 +116,6 @@ class Matrix {
   inline friend std::ostream& operator<<(std::ostream& out, Matrix<T>&& m) {
     return print_matrix(out, std::move(m));
   }
-
-  [[nodiscard]] int size() const { return rows_ * cols_; }
-  [[nodiscard]] int rows() const { return rows_; }
-  [[nodiscard]] int cols() const { return cols_; }
 
  private:
   uint rows_{0}, cols_{0};

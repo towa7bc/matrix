@@ -42,9 +42,12 @@ class Vector {
   Vector<T>& operator=(const Vector<T>& /*other*/) = delete;
   Vector(Vector<T>&& /*other*/) noexcept;
   Vector<T>& operator=(Vector<T>&& /*other*/) noexcept;
-  T& operator()(uint row);
-  T operator()(uint row) const;
   ~Vector() noexcept = default;
+
+  T& operator()(uint /*row*/);
+  T operator()(uint /*row*/) const;
+
+  [[nodiscard]] int size() const { return rows_; }
 
   /// vector addition
   inline friend Vector<T> operator+(const Vector<T>& vector1,
@@ -119,8 +122,6 @@ class Vector {
   inline friend std::ostream& operator<<(std::ostream& out, Vector<T>&& v) {
     return print_vector(out, std::move(v));
   }
-
-  [[nodiscard]] int size() const { return rows_; }
 
  private:
   uint rows_{0};

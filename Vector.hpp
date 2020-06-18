@@ -49,151 +49,75 @@ class Vector {
   /// vector addition
   inline friend Vector<T> operator+(const Vector<T>& vector1,
                                     const Vector<T>& vector2) {
-    if (vector1.rows_ != vector2.rows_) {
-      throw BadDimensionException("The vector dimensions have to be the same.");
-    }
-    Vector<T> result(vector1.rows_);
-    for (auto i = 0; i < vector1.rows_; ++i) {
-      result(i) = vector1(i) + vector2(i);
-    }
-    return result;
+    return add_vectors(vector1, vector2);
   }
 
   /// vector addition movable
   inline friend Vector<T> operator+(Vector<T>&& vector1, Vector<T>&& vector2) {
-    if (vector1.rows_ != vector2.rows_) {
-      throw BadDimensionException("The vector dimensions have to be the same.");
-    }
-    Vector<T> result(vector1.rows_);
-    for (auto i = 0; i < vector1.rows_; ++i) {
-      result(i) = vector1(i) + vector2(i);
-    }
-    return result;
+    return add_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// vector subtraction
   inline friend Vector<T> operator-(const Vector<T>& vector1,
                                     const Vector<T>& vector2) {
-    if (vector1.rows_ != vector2.rows_) {
-      throw BadDimensionException("The vector dimensions have to be the same.");
-    }
-    Vector<T> result(vector1.rows_);
-    for (auto i = 0; i < vector1.rows_; ++i) {
-      result(i) = vector1(i) - vector2(i);
-    }
-    return result;
+    return subtract_vectors(vector1, vector2);
   }
 
   /// vector subtraction movable
   inline friend Vector<T> operator-(Vector<T>&& vector1, Vector<T>&& vector2) {
-    if (vector1.rows_ != vector2.rows_) {
-      throw BadDimensionException("The vector dimensions have to be the same.");
-    }
-    Vector<T> result(vector1.rows_);
-    for (auto i = 0; i < vector1.rows_; ++i) {
-      result(i) = vector1(i) - vector2(i);
-    }
-    return result;
+    return subtract_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// scalar multiplication
   inline friend T operator*(const Vector<T>& vector1,
                             const Vector<T>& vector2) {
-    if (vector1.rows_ != vector2.rows_) {
-      throw BadDimensionException("The vector dimensions have to be the same.");
-    }
-    T result{0};
-    for (auto i = 0; i < vector1.rows_; ++i) {
-      result += vector1(i) * vector2(i);
-    }
-    return result;
+    return scalar_product(vector1, vector2);
   }
 
   /// scalar multiplication movable
   inline friend T operator*(Vector<T>&& vector1, Vector<T>&& vector2) {
-    if (vector1.rows_ != vector2.rows_) {
-      throw BadDimensionException("The vector dimensions have to be the same.");
-    }
-    T result{0};
-    for (auto i = 0; i < vector1.rows_; ++i) {
-      result += vector1(i) * vector2(i);
-    }
-    return result;
+    return scalar_product(std::move(vector1), std::move(vector2));
   }
 
-  /// multiply a vector with a scalar value
+  /// multiply a scalar value with a vector
   inline friend Vector<T> operator*(T scalarValue, const Vector<T>& vector) {
-    Vector<T> result(vector.rows_);
-    for (auto i = 0; i < vector.rows_; ++i) {
-      result(i) = scalarValue * vector(i);
-    }
-    return result;
+    return multiply_scalar_vector(scalarValue, vector);
   }
 
   /// multiply a vector with a scalar value
   inline friend Vector<T> operator*(const Vector<T>& vector, T scalarValue) {
-    Vector<T> result(vector.rows_);
-    result = scalarValue * vector;
-    return result;
+    return multiply_vector_scalar(vector, scalarValue);
   }
 
   /// multiply a vector with a scalar value movable
   inline friend Vector<T> operator*(Vector<T>&& vector, T scalarValue) {
-    Vector<T> result(vector.rows_);
-    result = scalarValue * vector;
-    return result;
+    return multiply_vector_scalar(std::move(vector), scalarValue);
   }
 
-  /// multiply a vector with a scalar value movable
+  /// multiply a scalar value with a vector value movable
   inline friend Vector<T> operator*(T scalarValue, Vector<T>&& vector) {
-    Vector<T> result(vector.rows_);
-    for (auto i = 0; i < vector.rows_; ++i) {
-      result(i) = scalarValue * vector(i);
-    }
-    return result;
+    return multiply_scalar_vector(scalarValue, std::move(vector));
   }
 
   /// calculate the cross product of two 3d vectors
   inline friend Vector<T> cross(const Vector<T>& v1, const Vector<T>& v2) {
-    if (v1.rows_ != 3 || v2.rows_ != 3) {
-      throw BadDimensionException(
-          "Vector cross product is only defined in 3 dimensions.");
-    }
-    Vector<T> result(3);
-    result(0) = v1(1) * v2(2) - v1(2) * v2(1);
-    result(1) = -(v1(0) * v2(2) - v1(2) * v2(0));
-    result(2) = v1(0) * v2(1) - v1(1) * v2(0);
-    return result;
+    return calc_cross(v1, v2);
   }
 
   /// calculate the cross product of two 3d vectors movable
   inline friend Vector<T> cross(Vector<T>&& v1, Vector<T>&& v2) {
-    if (v1.rows_ != 3 || v2.rows_ != 3) {
-      throw BadDimensionException(
-          "Vector cross product is only defined in 3 dimensions.");
-    }
-    Vector<T> result(3);
-    result(0) = v1(1) * v2(2) - v1(2) * v2(1);
-    result(1) = -(v1(0) * v2(2) - v1(2) * v2(0));
-    result(2) = v1(0) * v2(1) - v1(1) * v2(0);
-    return result;
+    return calc_cross(std::move(v1), std::move(v2));
   }
 
   /// print a complete vector
   inline friend std::ostream& operator<<(std::ostream& out,
                                          const Vector<T>& v) {
-    for (auto index{0}; index < v.rows_; ++index) {
-      out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
-    }
-    return out;
+    return print_vector(out, v);
   }
 
   /// print a complete vector movable
   inline friend std::ostream& operator<<(std::ostream& out, Vector<T>&& v) {
-    for (auto index{0}; index < v.rows_; ++index) {
-      out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
-    }
-    return out;
+    return print_vector(out, std::move(v));
   }
 
   [[nodiscard]] int size() const { return rows_; }
@@ -231,10 +155,9 @@ inline T Vector<T>::operator()(uint row) const {
 }
 
 template <typename T>
-Vector<T>::Vector(Vector<T>&& other) noexcept {
+Vector<T>::Vector(Vector<T>&& other) noexcept
+    : data_(std::move(other.data_)), rows_(std::move(other.rows_)) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-  data_ = std::move(other.data_);
-  rows_ = std::move(other.rows_);
   other.data_ = nullptr;
   other.rows_ = 0;
 }
@@ -248,6 +171,83 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
     other.rows_ = 0;
   }
   return *this;
+}
+
+template <typename T>
+inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
+  for (auto index{0}; index < v.size(); ++index) {
+    out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
+  }
+  return out;
+}
+
+template <typename T>
+inline Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
+  if (v1.size() != 3 || v2.size() != 3) {
+    throw BadDimensionException(
+        "Vector cross product is only defined in 3 dimensions.");
+  }
+  Vector<T> result(3);
+  result(0) = v1(1) * v2(2) - v1(2) * v2(1);
+  result(1) = -(v1(0) * v2(2) - v1(2) * v2(0));
+  result(2) = v1(0) * v2(1) - v1(1) * v2(0);
+  return result;
+}
+
+template <typename T>
+inline Vector<T> multiply_scalar_vector(T scalarValue,
+                                        const Vector<T>& vector) {
+  Vector<T> result(vector.size());
+  for (auto i = 0; i < vector.size(); ++i) {
+    result(i) = scalarValue * vector(i);
+  }
+  return result;
+}
+
+template <typename T>
+inline Vector<T> multiply_vector_scalar(const Vector<T>& vector,
+                                        T scalarValue) {
+  Vector<T> result(vector.size());
+  result = scalarValue * vector;
+  return result;
+}
+
+template <typename T>
+inline T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
+  if (vector1.size() != vector2.size()) {
+    throw BadDimensionException("The vector dimensions have to be the same.");
+  }
+  T result{0};
+  for (auto i = 0; i < vector1.size(); ++i) {
+    result += vector1(i) * vector2(i);
+  }
+  return result;
+}
+
+template <typename T>
+inline Vector<T> subtract_vectors(const Vector<T>& vector1,
+                                  const Vector<T>& vector2) {
+  if (vector1.size() != vector2.size()) {
+    throw BadDimensionException("The vector dimensions have to be the same.");
+  }
+  Vector<T> result(vector1.size());
+  for (auto i = 0; i < vector1.size(); ++i) {
+    result(i) = vector1(i) - vector2(i);
+  }
+  return result;
+}
+
+template <typename T>
+inline Vector<T> add_vectors(const Vector<T>& vector1,
+                             const Vector<T>& vector2) {
+  if (vector1.size() != vector2.size()) {
+    throw BadDimensionException("The vector dimensions have to be the same.");
+  }
+  Vector<T> result(vector1.size());
+  for (auto i = 0; i < vector1.size(); ++i) {
+    result(i) = vector1(i) + vector2(i);
+  }
+  return result;
 }
 
 }  // namespace libMatrix::inline v1

@@ -48,11 +48,11 @@ int main() {
 
   resVec = 2 * vec1 - vec2;
   res = vec1 * vec2;
-  auto d = cross(crossVec, crossVec2);
+  auto d = cross(std::move(crossVec), std::move(crossVec2));
   std::cout << std::move(res3) << '\n';
   std::cout << res2(1, 1) << '\n';
   std::cout << resVec << '\n';
   std::cout << res << '\n';
-  std::cout << d(0) << '\n';
+  std::cout << d << '\n';
   return 0;
 }

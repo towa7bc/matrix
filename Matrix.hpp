@@ -30,223 +30,87 @@ class Matrix {
   /// multiply two matrices
   inline friend Matrix<T> operator*(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
-    if (matrix1.cols_ != matrix2.rows_) {
-      throw BadDimensionException(
-          "matrix1.cols has to be the same as matrix2.rows");
-    }
-    Matrix<T> result(matrix1.rows_, matrix1.cols_);
-    for (auto i = 0; i < matrix1.rows_; ++i) {
-      for (auto j = 0; j < matrix1.cols_; ++j) {
-        for (auto k = 0; k < matrix1.cols_; ++k) {
-          result(i, j) += matrix1(i, k) * matrix2(k, j);
-        }
-      }
-    }
-    return result;
+    return multiply_matrices(matrix1, matrix2);
   }
 
   /// multiply two matrices movable
   inline friend Matrix<T> operator*(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
-    if (matrix1.cols_ != matrix2.rows_) {
-      throw BadDimensionException(
-          "matrix1.cols has to be the same as matrix2.rows");
-    }
-    Matrix<T> result(matrix1.rows_, matrix1.cols_);
-    for (auto i = 0; i < matrix1.rows_; ++i) {
-      for (auto j = 0; j < matrix1.cols_; ++j) {
-        for (auto k = 0; k < matrix1.cols_; ++k) {
-          result(i, j) += matrix1(i, k) * matrix2(k, j);
-        }
-      }
-    }
-    return result;
+    return multiply_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// multiply a matrix and a vector
   inline friend Vector<T> operator*(const Matrix<T>& matrix,
                                     const Vector<T>& vector) {
-    if (matrix.cols_ != vector.rows_) {
-      throw BadDimensionException(
-          "matrix.cols has to be the same as the vector dimension.");
-    }
-    Vector<T> result(vector.rows_);
-    for (auto i = 0; i < matrix.rows_; ++i) {
-      for (auto j = 0; j < matrix.cols_; ++j) {
-        result(i) += matrix(i, j) * vector(j);
-      }
-    }
-    return result;
+    return multiply_matrix_vector(matrix, vector);
   }
   /// multiply a transposed vector and a matrix
   inline friend Vector<T> operator*(const Vector<T>& vector,
                                     const Matrix<T>& matrix) {
-    if (matrix.rows_ != vector.rows_) {
-      throw BadDimensionException(
-          "matrix.rows has to be the same as the vector dimension.");
-    }
-    Vector<T> result(vector.rows_);
-    for (auto i = 0; i < matrix.rows_; ++i) {
-      for (auto j = 0; j < matrix.cols_; ++j) {
-        result(i) += vector(i) * matrix(i, j);
-      }
-    }
-    return result;
+    return multiply_matrix_transposed_vector(vector, matrix);
   }
 
   /// multiply a matrix and a vector movable
   inline friend Vector<T> operator*(Matrix<T>&& matrix, Vector<T>&& vector) {
-    if (matrix.cols_ != vector.rows_) {
-      throw BadDimensionException(
-          "matrix.cols has to be the same as the vector dimension.");
-    }
-    Vector<T> result(vector.rows_);
-    for (auto i = 0; i < matrix.rows_; ++i) {
-      for (auto j = 0; j < matrix.cols_; ++j) {
-        result(i) += matrix(i, j) * vector(j);
-      }
-    }
-    return result;
+    return multiply_matrix_vector(std::move(matrix), std::move(vector));
   }
+
   /// multiply a transposed vector and a matrix movable
   inline friend Vector<T> operator*(Vector<T>&& vector, Matrix<T>&& matrix) {
-    if (matrix.rows_ != vector.rows_) {
-      throw BadDimensionException(
-          "matrix.rows has to be the same as the vector dimension.");
-    }
-    Vector<T> result(vector.rows_);
-    for (auto i = 0; i < matrix.rows_; ++i) {
-      for (auto j = 0; j < matrix.cols_; ++j) {
-        result(i) += vector(i) * matrix(i, j);
-      }
-    }
-    return result;
+    return multiply_matrix_transposed_vector(std::move(vector),
+                                             std::move(matrix));
   }
 
   /// multiply a scalar with a matrix
   inline friend Matrix<T> operator*(T scalarValue, const Matrix<T>& matrix) {
-    Matrix<T> result(matrix.rows_, matrix.cols_);
-    for (auto i = 0; i < matrix.rows_; ++i) {
-      for (auto j = 0; j < matrix.cols_; ++j) {
-        result(i, j) = scalarValue * matrix(i, j);
-      }
-    }
-    return result;
+    return multiply_scalar_matrix(scalarValue, matrix);
   }
 
   /// multiply a matrix with a scalar
   inline friend Matrix<T> operator*(const Matrix<T>& matrix, T scalarValue) {
-    Matrix<T> result(matrix.rows_, matrix.cols_);
-    result = scalarValue * matrix;
-    return result;
+    return multiply_matrix_scalar(matrix, scalarValue);
   }
 
   /// multiply a scalar with a matrix movable
   inline friend Matrix<T> operator*(T scalarValue, Matrix<T>&& matrix) {
-    Matrix<T> result(matrix.rows_, matrix.cols_);
-    for (auto i = 0; i < matrix.rows_; ++i) {
-      for (auto j = 0; j < matrix.cols_; ++j) {
-        result(i, j) = scalarValue * matrix(i, j);
-      }
-    }
-    return result;
+    return multiply_scalar_matrix(scalarValue, std::move(matrix));
   }
 
   /// multiply a matrix with a scalar movable
   inline friend Matrix<T> operator*(Matrix<T>&& matrix, T scalarValue) {
-    Matrix<T> result(matrix.rows_, matrix.cols_);
-    result = scalarValue * matrix;
-    return result;
+    return multiply_matrix_scalar(std::move(matrix), scalarValue);
   }
 
   /// add two matrices
   inline friend Matrix<T> operator+(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
-    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
-      throw BadDimensionException("The matrix dimensions have to be the same.");
-    }
-    Matrix<T> result(matrix1.rows_, matrix1.cols_);
-    for (auto i = 0; i < matrix1.rows_; ++i) {
-      for (auto j = 0; j < matrix1.cols_; ++j) {
-        for (auto k = 0; k < matrix1.cols_; ++k) {
-          result(i, j) = matrix1(i, k) + matrix2(k, j);
-        }
-      }
-    }
-    return result;
+    return add_matrices(matrix1, matrix2);
   }
 
   /// add two matrices movable
   inline friend Matrix<T> operator+(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
-    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
-      throw BadDimensionException("The matrix dimensions have to be the same.");
-    }
-    Matrix<T> result(matrix1.rows_, matrix1.cols_);
-    for (auto i = 0; i < matrix1.rows_; ++i) {
-      for (auto j = 0; j < matrix1.cols_; ++j) {
-        for (auto k = 0; k < matrix1.cols_; ++k) {
-          result(i, j) = matrix1(i, k) + matrix2(k, j);
-        }
-      }
-    }
-    return result;
+    return add_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// subtract two matrices
   inline friend Matrix<T> operator-(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
-    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
-      throw BadDimensionException("The matrix dimensions have to be the same.");
-    }
-    Matrix<T> result(matrix1.rows_, matrix1.cols_);
-    for (auto i = 0; i < matrix1.rows_; ++i) {
-      for (auto j = 0; j < matrix1.cols_; ++j) {
-        for (auto k = 0; k < matrix1.cols_; ++k) {
-          result(i, j) = matrix1(i, k) - matrix2(k, j);
-        }
-      }
-    }
-    return result;
+    return subtract_matrices(matrix1, matrix2);
   }
 
   /// subtract two matrices movable
   inline friend Matrix<T> operator-(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
-    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
-      throw BadDimensionException("The matrix dimensions have to be the same.");
-    }
-    Matrix<T> result(matrix1.rows_, matrix1.cols_);
-    for (auto i = 0; i < matrix1.rows_; ++i) {
-      for (auto j = 0; j < matrix1.cols_; ++j) {
-        for (auto k = 0; k < matrix1.cols_; ++k) {
-          result(i, j) = matrix1(i, k) - matrix2(k, j);
-        }
-      }
-    }
-    return result;
+    return subtract_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// print a complete matrix
   inline friend std::ostream& operator<<(std::ostream& out,
                                          const Matrix<T>& m) {
-    for (auto row{0}; row < m.rows_; ++row) {
-      out << '|' << ' ';
-      for (auto col{0}; col < m.cols_; ++col) {
-        out << m(row, col) << ' ';
-      }
-      out << '|' << '\n';
-    }
-    return out;
+    return print_matrix(out, m);
   }
 
   /// print a complete matrix movable
   inline friend std::ostream& operator<<(std::ostream& out, Matrix<T>&& m) {
-    for (auto row{0}; row < m.rows_; ++row) {
-      out << '|' << ' ';
-      for (auto col{0}; col < m.cols_; ++col) {
-        out << m(row, col) << ' ';
-      }
-      out << '|' << '\n';
-    }
-    return out;
+    return print_matrix(out, std::move(m));
   }
 
   [[nodiscard]] int size() const { return rows_ * cols_; }
@@ -313,6 +177,121 @@ Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
     other.cols_ = 0;
   }
   return *this;
+}
+
+template <typename T>
+inline std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
+  for (auto row{0}; row < m.rows(); ++row) {
+    out << '|' << ' ';
+    for (auto col{0}; col < m.cols(); ++col) {
+      out << m(row, col) << ' ';
+    }
+    out << '|' << '\n';
+  }
+  return out;
+}
+
+template <typename T>
+inline Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
+                                   const Matrix<T>& matrix2) {
+  if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
+    throw BadDimensionException("The matrix dimensions have to be the same.");
+  }
+  Matrix<T> result(matrix1.rows(), matrix1.cols());
+  for (auto i = 0; i < matrix1.rows(); ++i) {
+    for (auto j = 0; j < matrix1.cols(); ++j) {
+      for (auto k = 0; k < matrix1.cols(); ++k) {
+        result(i, j) = matrix1(i, k) - matrix2(k, j);
+      }
+    }
+  }
+  return result;
+}
+
+template <typename T>
+inline Matrix<T> add_matrices(const Matrix<T>& matrix1,
+                              const Matrix<T>& matrix2) {
+  if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
+    throw BadDimensionException("The matrix dimensions have to be the same.");
+  }
+  Matrix<T> result(matrix1.rows(), matrix1.cols());
+  for (auto i = 0; i < matrix1.rows(); ++i) {
+    for (auto j = 0; j < matrix1.cols(); ++j) {
+      for (auto k = 0; k < matrix1.cols(); ++k) {
+        result(i, j) = matrix1(i, k) + matrix2(k, j);
+      }
+    }
+  }
+  return result;
+}
+
+template <typename T>
+inline Matrix<T> multiply_scalar_matrix(T scalarValue,
+                                        const Matrix<T>& matrix) {
+  Matrix<T> result(matrix.rows(), matrix.cols());
+  for (auto i = 0; i < matrix.rows(); ++i) {
+    for (auto j = 0; j < matrix.cols(); ++j) {
+      result(i, j) = scalarValue * matrix(i, j);
+    }
+  }
+  return result;
+}
+
+template <typename T>
+inline Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix,
+                                        T scalarValue) {
+  Matrix<T> result(matrix.rows(), matrix.cols());
+  result = scalarValue * matrix;
+  return result;
+}
+
+template <typename T>
+inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
+                                        const Vector<T>& vector) {
+  if (matrix.cols() != vector.rows()) {
+    throw BadDimensionException(
+        "matrix.cols has to be the same as the vector dimension.");
+  }
+  Vector<T> result(vector.rows());
+  for (auto i = 0; i < matrix.rows(); ++i) {
+    for (auto j = 0; j < matrix.cols(); ++j) {
+      result(i) += matrix(i, j) * vector(j);
+    }
+  }
+  return result;
+}
+
+template <typename T>
+inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
+                                                   const Matrix<T>& matrix) {
+  if (matrix.rows() != vector.rows()) {
+    throw BadDimensionException(
+        "matrix.rows has to be the same as the vector dimension.");
+  }
+  Vector<T> result(vector.rows());
+  for (auto i = 0; i < matrix.rows(); ++i) {
+    for (auto j = 0; j < matrix.cols(); ++j) {
+      result(i) += vector(i) * matrix(i, j);
+    }
+  }
+  return result;
+}
+template <typename T>
+inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
+                                   const Matrix<T>& matrix2) {
+  if (matrix1.cols() != matrix2.rows()) {
+    throw BadDimensionException(
+        "matrix1.cols has to be the same as matrix2.rows");
+  }
+  Matrix<T> result(matrix1.rows(), matrix1.cols());
+  for (auto i = 0; i < matrix1.rows(); ++i) {
+    for (auto j = 0; j < matrix1.cols(); ++j) {
+      for (auto k = 0; k < matrix1.cols(); ++k) {
+        result(i, j) += matrix1(i, k) * matrix2(k, j);
+      }
+    }
+  }
+  return result;
 }
 
 }  // namespace libMatrix::inline v1

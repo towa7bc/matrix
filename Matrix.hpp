@@ -254,11 +254,11 @@ inline Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix,
 template <typename T>
 inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
                                         const Vector<T>& vector) {
-  if (matrix.cols() != vector.rows()) {
+  if (matrix.cols() != vector.size()) {
     throw BadDimensionException(
         "matrix.cols has to be the same as the vector dimension.");
   }
-  Vector<T> result(vector.rows());
+  Vector<T> result(vector.size());
   for (auto i = 0; i < matrix.rows(); ++i) {
     for (auto j = 0; j < matrix.cols(); ++j) {
       result(i) += matrix(i, j) * vector(j);
@@ -270,11 +270,11 @@ inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
 template <typename T>
 inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
                                                    const Matrix<T>& matrix) {
-  if (matrix.rows() != vector.rows()) {
+  if (matrix.rows() != vector.size()) {
     throw BadDimensionException(
         "matrix.rows has to be the same as the vector dimension.");
   }
-  Vector<T> result(vector.rows());
+  Vector<T> result(vector.size());
   for (auto i = 0; i < matrix.rows(); ++i) {
     for (auto j = 0; j < matrix.cols(); ++j) {
       result(i) += vector(i) * matrix(i, j);

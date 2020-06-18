@@ -2,6 +2,7 @@
 #define MATRIX_MATRIX_HPP
 
 #include <exception>
+#include <future>
 #include <iostream>
 #include <memory>
 #include <type_traits>
@@ -203,15 +204,18 @@ inline Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
   }
-  Matrix<T> result(matrix1.rows(), matrix1.cols());
-  for (auto i = 0; i < matrix1.rows(); ++i) {
-    for (auto j = 0; j < matrix1.cols(); ++j) {
-      for (auto k = 0; k < matrix1.cols(); ++k) {
-        result(i, j) = matrix1(i, k) - matrix2(k, j);
+  auto resultFuture = std::async(std::launch::async, [&]() {
+    Matrix<T> result(matrix1.rows(), matrix1.cols());
+    for (auto i = 0; i < matrix1.rows(); ++i) {
+      for (auto j = 0; j < matrix1.cols(); ++j) {
+        for (auto k = 0; k < matrix1.cols(); ++k) {
+          result(i, j) = matrix1(i, k) - matrix2(k, j);
+        }
       }
     }
-  }
-  return result;
+    return result;
+  });
+  return resultFuture.get();
 }
 
 template <typename T>
@@ -220,15 +224,18 @@ inline Matrix<T> add_matrices(const Matrix<T>& matrix1,
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
   }
-  Matrix<T> result(matrix1.rows(), matrix1.cols());
-  for (auto i = 0; i < matrix1.rows(); ++i) {
-    for (auto j = 0; j < matrix1.cols(); ++j) {
-      for (auto k = 0; k < matrix1.cols(); ++k) {
-        result(i, j) = matrix1(i, k) + matrix2(k, j);
+  auto resultFuture = std::async(std::launch::async, [&]() {
+    Matrix<T> result(matrix1.rows(), matrix1.cols());
+    for (auto i = 0; i < matrix1.rows(); ++i) {
+      for (auto j = 0; j < matrix1.cols(); ++j) {
+        for (auto k = 0; k < matrix1.cols(); ++k) {
+          result(i, j) = matrix1(i, k) + matrix2(k, j);
+        }
       }
     }
-  }
-  return result;
+    return result;
+  });
+  return resultFuture.get();
 }
 
 template <typename T>
@@ -258,13 +265,16 @@ inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
     throw BadDimensionException(
         "matrix.cols has to be the same as the vector dimension.");
   }
-  Vector<T> result(vector.size());
-  for (auto i = 0; i < matrix.rows(); ++i) {
-    for (auto j = 0; j < matrix.cols(); ++j) {
-      result(i) += matrix(i, j) * vector(j);
+  auto resultFuture = std::async(std::launch::async, [&]() {
+    Vector<T> result(vector.size());
+    for (auto i = 0; i < matrix.rows(); ++i) {
+      for (auto j = 0; j < matrix.cols(); ++j) {
+        result(i) += matrix(i, j) * vector(j);
+      }
     }
-  }
-  return result;
+    return result;
+  });
+  return resultFuture.get();
 }
 
 template <typename T>
@@ -274,13 +284,16 @@ inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
     throw BadDimensionException(
         "matrix.rows has to be the same as the vector dimension.");
   }
-  Vector<T> result(vector.size());
-  for (auto i = 0; i < matrix.rows(); ++i) {
-    for (auto j = 0; j < matrix.cols(); ++j) {
-      result(i) += vector(i) * matrix(i, j);
+  auto resultFuture = std::async(std::launch::async, [&]() {
+    Vector<T> result(vector.size());
+    for (auto i = 0; i < matrix.rows(); ++i) {
+      for (auto j = 0; j < matrix.cols(); ++j) {
+        result(i) += vector(i) * matrix(i, j);
+      }
     }
-  }
-  return result;
+    return result;
+  });
+  return resultFuture.get();
 }
 template <typename T>
 inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
@@ -289,15 +302,18 @@ inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
     throw BadDimensionException(
         "matrix1.cols has to be the same as matrix2.rows");
   }
-  Matrix<T> result(matrix1.rows(), matrix1.cols());
-  for (auto i = 0; i < matrix1.rows(); ++i) {
-    for (auto j = 0; j < matrix1.cols(); ++j) {
-      for (auto k = 0; k < matrix1.cols(); ++k) {
-        result(i, j) += matrix1(i, k) * matrix2(k, j);
+  auto resultFuture = std::async(std::launch::async, [&]() {
+    Matrix<T> result(matrix1.rows(), matrix1.cols());
+    for (auto i = 0; i < matrix1.rows(); ++i) {
+      for (auto j = 0; j < matrix1.cols(); ++j) {
+        for (auto k = 0; k < matrix1.cols(); ++k) {
+          result(i, j) += matrix1(i, k) * matrix2(k, j);
+        }
       }
     }
-  }
-  return result;
+    return result;
+  });
+  return resultFuture.get();
 }
 
 /// #endregion helper functions

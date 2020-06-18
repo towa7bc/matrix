@@ -47,12 +47,12 @@ int main() {
   res2 = std::move(m1) * scalar;
 
   resVec = 2 * vec1 - vec2;
-  // res = vec1 * vec2;
-  // auto d = cross(crossVec, crossVec2);
-  // std::cout << res3 << '\n';
-  // std::cout << res2(1, 1) << '\n';
+  res = vec1 * vec2;
+  auto d = cross(crossVec, crossVec2);
+  std::cout << res3 << '\n';
+  std::cout << res2(1, 1) << '\n';
   std::cout << resVec << '\n';
-  // std::cout << res << '\n';
-  // std::cout << d(0) << '\n';
+  std::cout << res << '\n';
+  std::cout << d(0) << '\n';
   return 0;
 }

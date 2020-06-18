@@ -38,8 +38,8 @@ class Vector {
  public:
   Vector() = delete;
   explicit Vector(uint /*rows*/);
-  Vector(const Vector<T>& /*other*/);
-  Vector<T>& operator=(const Vector<T>& /*other*/);
+  Vector(const Vector<T>& /*other*/) = delete;
+  Vector<T>& operator=(const Vector<T>& /*other*/) = delete;
   Vector(Vector<T>&& /*other*/) noexcept;
   Vector<T>& operator=(Vector<T>&& /*other*/) noexcept;
   T& operator()(uint row);
@@ -228,22 +228,6 @@ inline T Vector<T>::operator()(uint row) const {
     throw BadIndexException("Vector constructor has 0 size");
   }
   return data_[row];
-}
-
-template <typename T>
-Vector<T>::Vector(const Vector<T>& other) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-  data_ = std::make_unique<T[]>(other.rows_);
-  *data_ = *other.data_;
-}
-
-template <typename T>
-Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
-  if (this != &other) {
-    *data_ = *other.data_;
-    rows_ = other.rows_;
-  }
-  return *this;
 }
 
 template <typename T>

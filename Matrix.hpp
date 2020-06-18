@@ -16,8 +16,8 @@ template <typename T>
 class Matrix {
  public:
   Matrix() = delete;
-  Matrix(const Matrix<T>& /*other*/);
-  Matrix<T>& operator=(const Matrix<T>& /*other*/);
+  Matrix(const Matrix<T>& /*other*/) = delete;
+  Matrix<T>& operator=(const Matrix<T>& /*other*/) = delete;
   Matrix(Matrix<T>&& /*other*/) noexcept;
   Matrix<T>& operator=(Matrix<T>&& /*other*/) noexcept;
   Matrix(uint rows, uint cols);
@@ -292,25 +292,6 @@ bool Matrix<T>::exists(uint row, uint col) const {
 }
 
 template <typename T>
-Matrix<T>::Matrix(const Matrix<T>& other) {
-  // std::cout << "copy constructor";
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-  data_ = std::unique_ptr<T[]>(other.rows_ * other.cols_);
-  *data_ = *other.data_;
-}
-
-template <typename T>
-Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
-  // std::cout << "copy assignment";
-  if (this != &other) {
-    *data_ = *other.data_;
-    cols_ = other.cols_;
-    rows_ = other.rows_;
-  }
-  return *this;
-}
-
-template <typename T>
 Matrix<T>::Matrix(Matrix<T>&& other) noexcept
     : data_(std::move(other.data_)),
       rows_(std::move(other.rows_)),
@@ -324,7 +305,6 @@ Matrix<T>::Matrix(Matrix<T>&& other) noexcept
 
 template <typename T>
 Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
-  std::cout << "move assignment";
   if (this != &other) {
     data_ = std::move(other.data_);
     rows_ = std::move(other.rows_);

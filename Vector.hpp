@@ -36,7 +36,7 @@ using uint = unsigned int;
 template <typename T>
 class Vector {
  public:
-  Vector();
+  Vector() = delete;
   explicit Vector(uint /*rows*/);
   Vector(const Vector<T>& /*other*/);
   Vector<T>& operator=(const Vector<T>& /*other*/);
@@ -71,13 +71,38 @@ class Vector {
     return result;
   }
 
+  /// vector subtraction
+  inline friend Vector<T> operator-(const Vector<T>& vector1,
+                                    const Vector<T>& vector2) {
+    if (vector1.rows_ != vector2.rows_) {
+      throw BadDimensionException("The vector dimensions have to be the same.");
+    }
+    Vector<T> result(vector1.rows_);
+    for (auto i = 0; i < vector1.rows_; ++i) {
+      result(i) = vector1(i) - vector2(i);
+    }
+    return result;
+  }
+
+  /// vector subtraction movable
+  inline friend Vector<T> operator-(Vector<T>&& vector1, Vector<T>&& vector2) {
+    if (vector1.rows_ != vector2.rows_) {
+      throw BadDimensionException("The vector dimensions have to be the same.");
+    }
+    Vector<T> result(vector1.rows_);
+    for (auto i = 0; i < vector1.rows_; ++i) {
+      result(i) = vector1(i) - vector2(i);
+    }
+    return result;
+  }
+
   /// scalar multiplication
   inline friend T operator*(const Vector<T>& vector1,
                             const Vector<T>& vector2) {
     if (vector1.rows_ != vector2.rows_) {
       throw BadDimensionException("The vector dimensions have to be the same.");
     }
-    T result;
+    T result{0};
     for (auto i = 0; i < vector1.rows_; ++i) {
       result += vector1(i) * vector2(i);
     }
@@ -89,7 +114,7 @@ class Vector {
     if (vector1.rows_ != vector2.rows_) {
       throw BadDimensionException("The vector dimensions have to be the same.");
     }
-    T result;
+    T result{0};
     for (auto i = 0; i < vector1.rows_; ++i) {
       result += vector1(i) * vector2(i);
     }
@@ -98,7 +123,7 @@ class Vector {
 
   /// multiply a vector with a scalar value
   inline friend Vector<T> operator*(T scalarValue, const Vector<T>& vector) {
-    Vector<T> result;
+    Vector<T> result(vector.rows_);
     for (auto i = 0; i < vector.rows_; ++i) {
       result(i) = scalarValue * vector(i);
     }
@@ -107,21 +132,21 @@ class Vector {
 
   /// multiply a vector with a scalar value
   inline friend Vector<T> operator*(const Vector<T>& vector, T scalarValue) {
-    Vector<T> result;
+    Vector<T> result(vector.rows_);
     result = scalarValue * vector;
     return result;
   }
 
   /// multiply a vector with a scalar value movable
   inline friend Vector<T> operator*(Vector<T>&& vector, T scalarValue) {
-    Vector<T> result;
+    Vector<T> result(vector.rows_);
     result = scalarValue * vector;
     return result;
   }
 
   /// multiply a vector with a scalar value movable
   inline friend Vector<T> operator*(T scalarValue, Vector<T>&& vector) {
-    Vector<T> result;
+    Vector<T> result(vector.rows_);
     for (auto i = 0; i < vector.rows_; ++i) {
       result(i) = scalarValue * vector(i);
     }
@@ -130,7 +155,6 @@ class Vector {
 
   /// calculate the cross product of two 3d vectors
   inline friend Vector<T> cross(const Vector<T>& v1, const Vector<T>& v2) {
-    std::cout << "cross copy";
     if (v1.rows_ != 3 || v2.rows_ != 3) {
       throw BadDimensionException(
           "Vector cross product is only defined in 3 dimensions.");
@@ -144,7 +168,6 @@ class Vector {
 
   /// calculate the cross product of two 3d vectors movable
   inline friend Vector<T> cross(Vector<T>&& v1, Vector<T>&& v2) {
-    std::cout << "cross move";
     if (v1.rows_ != 3 || v2.rows_ != 3) {
       throw BadDimensionException(
           "Vector cross product is only defined in 3 dimensions.");
@@ -156,17 +179,29 @@ class Vector {
     return result;
   }
 
+  /// print a complete vector
+  inline friend std::ostream& operator<<(std::ostream& out,
+                                         const Vector<T>& v) {
+    for (auto index{0}; index < v.rows_; ++index) {
+      out << '|' << v(index) << '|' << '\n';
+    }
+    return out;
+  }
+
+  /// print a complete vector movable
+  inline friend std::ostream& operator<<(std::ostream& out, Vector<T>&& v) {
+    for (auto index{0}; index < v.rows_; ++index) {
+      out << '|' << v(index) << '|' << '\n';
+    }
+    return out;
+  }
+
   [[nodiscard]] int size() const { return rows_; }
 
  private:
   uint rows_{0};
   std::unique_ptr<T[]> data_;
 };
-
-template <typename T>
-Vector<T>::Vector() : data_(std::make_unique<T[]>(0)) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-}
 
 template <typename T>
 Vector<T>::Vector(uint rows) : rows_(rows) {
@@ -197,7 +232,6 @@ inline T Vector<T>::operator()(uint row) const {
 
 template <typename T>
 Vector<T>::Vector(const Vector<T>& other) {
-  // std::cout << "copy constructor";
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   data_ = std::make_unique<T[]>(other.rows_);
   *data_ = *other.data_;
@@ -205,7 +239,6 @@ Vector<T>::Vector(const Vector<T>& other) {
 
 template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
-  // std::cout << "copy assignment";
   if (this != &other) {
     *data_ = *other.data_;
     rows_ = other.rows_;
@@ -215,7 +248,6 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
 
 template <typename T>
 Vector<T>::Vector(Vector<T>&& other) noexcept {
-  // std::cout << "move constructor";
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   data_ = std::move(other.data_);
   rows_ = std::move(other.rows_);
@@ -225,7 +257,6 @@ Vector<T>::Vector(Vector<T>&& other) noexcept {
 
 template <typename T>
 Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
-  std::cout << "move assignment";
   if (this != &other) {
     data_ = std::move(other.data_);
     rows_ = std::move(other.rows_);

@@ -15,7 +15,7 @@ using uint = unsigned int;
 template <typename T>
 class Matrix {
  public:
-  Matrix();
+  Matrix() = delete;
   Matrix(const Matrix<T>& /*other*/);
   Matrix<T>& operator=(const Matrix<T>& /*other*/);
   Matrix(Matrix<T>&& /*other*/) noexcept;
@@ -191,6 +191,64 @@ class Matrix {
     return result;
   }
 
+  /// subtract two matrices
+  inline friend Matrix<T> operator-(const Matrix<T>& matrix1,
+                                    const Matrix<T>& matrix2) {
+    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
+      throw BadDimensionException("The matrix dimensions have to be the same.");
+    }
+    Matrix<T> result(matrix1.rows_, matrix1.cols_);
+    for (auto i = 0; i < matrix1.rows_; ++i) {
+      for (auto j = 0; j < matrix1.cols_; ++j) {
+        for (auto k = 0; k < matrix1.cols_; ++k) {
+          result(i, j) = matrix1(i, k) - matrix2(k, j);
+        }
+      }
+    }
+    return result;
+  }
+
+  /// subtract two matrices movable
+  inline friend Matrix<T> operator-(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
+    if (matrix1.cols_ != matrix2.cols_ || matrix1.rows_ != matrix2.rows_) {
+      throw BadDimensionException("The matrix dimensions have to be the same.");
+    }
+    Matrix<T> result(matrix1.rows_, matrix1.cols_);
+    for (auto i = 0; i < matrix1.rows_; ++i) {
+      for (auto j = 0; j < matrix1.cols_; ++j) {
+        for (auto k = 0; k < matrix1.cols_; ++k) {
+          result(i, j) = matrix1(i, k) - matrix2(k, j);
+        }
+      }
+    }
+    return result;
+  }
+
+  /// print a complete matrix
+  inline friend std::ostream& operator<<(std::ostream& out,
+                                         const Matrix<T>& m) {
+    for (auto row{0}; row < m.rows_; ++row) {
+      out << '|' << ' ';
+      for (auto col{0}; col < m.cols_; ++col) {
+        out << m(row, col) << ' ';
+      }
+      out << '|' << '\n';
+    }
+    return out;
+  }
+
+  /// print a complete matrix movable
+  inline friend std::ostream& operator<<(std::ostream& out, Matrix<T>&& m) {
+    for (auto row{0}; row < m.rows_; ++row) {
+      out << '|' << ' ';
+      for (auto col{0}; col < m.cols_; ++col) {
+        out << m(row, col) << ' ';
+      }
+      out << '|' << '\n';
+    }
+    return out;
+  }
+
   [[nodiscard]] int size() const { return rows_ * cols_; }
   [[nodiscard]] int rows() const { return rows_; }
   [[nodiscard]] int cols() const { return cols_; }
@@ -200,10 +258,6 @@ class Matrix {
   std::unique_ptr<T[]> data_;
 };
 
-template <typename T>
-Matrix<T>::Matrix() : data_(std::make_unique<T[]>(0)) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-}
 template <typename T>
 Matrix<T>::Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");

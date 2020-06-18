@@ -9,6 +9,8 @@ int main() {
   libMatrix::Matrix<float> m2(2, 2);
   libMatrix::Matrix<float> res1(2, 2);
   libMatrix::Matrix<float> res2(2, 2);
+  libMatrix::Matrix<float> res3(2, 2);
+
   libMatrix::Vector<float> vec1(2);
   libMatrix::Vector<float> vec2(2);
   libMatrix::Vector<float> resVec(2);
@@ -24,10 +26,11 @@ int main() {
   m2(0, 1) = 2;
   m2(1, 0) = 3;
   m2(1, 1) = 4;
+
   vec1(0) = 1;
   vec1(1) = 2;
   vec2(0) = 1;
-  vec2(1) = 2;
+  vec2(1) = 3;
 
   crossVec(0) = 1;
   crossVec(1) = 2;
@@ -40,15 +43,16 @@ int main() {
   // res2(1, 0) = 0;
   // res2(1, 1) = 0;
   res1 = m1 * m2;
-  // res2 = m1 + m2;
+  res3 = 5 * m1 + 2 * m2;
   res2 = std::move(m1) * scalar;
-  resVec = vec1 + vec2;
-  res = vec1 * vec2;
-  auto d = cross(crossVec, crossVec2);
-  std::cout << res2(1, 1) << '\n';
-  std::cout << res2(1, 1) << '\n';
-  std::cout << resVec(1) << '\n';
-  std::cout << res << '\n';
-  std::cout << d(0) << '\n';
+
+  resVec = 2 * vec1 - vec2;
+  // res = vec1 * vec2;
+  // auto d = cross(crossVec, crossVec2);
+  // std::cout << res3 << '\n';
+  // std::cout << res2(1, 1) << '\n';
+  std::cout << resVec << '\n';
+  // std::cout << res << '\n';
+  // std::cout << d(0) << '\n';
   return 0;
 }

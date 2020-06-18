@@ -296,7 +296,6 @@ Matrix<T>::Matrix(Matrix<T>&& other) noexcept
     : data_(std::move(other.data_)),
       rows_(std::move(other.rows_)),
       cols_(std::move(other.cols_)) {
-  // std::cout << "move constructor";
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   other.data_ = nullptr;
   other.rows_ = 0;

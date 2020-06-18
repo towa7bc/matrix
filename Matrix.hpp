@@ -3,11 +3,12 @@
 
 #include <exception>
 #include <iostream>
+#include <memory>
 #include <type_traits>
 
 #include "Vector.hpp"
 
-namespace libmatrix::inline v1 {
+namespace libMatrix::inline v1 {
 
 using uint = unsigned int;
 
@@ -20,9 +21,9 @@ class Matrix {
   Matrix(Matrix<T>&& /*other*/) noexcept;
   Matrix<T>& operator=(Matrix<T>&& /*other*/) noexcept;
   Matrix(uint rows, uint cols);
-  ~Matrix() noexcept;
+  ~Matrix() noexcept = default;
 
-  bool exists(uint row, uint col) const;
+  [[nodiscard]] bool exists(uint row, uint col) const;
   T& operator()(uint row, uint col);
   T operator()(uint row, uint col) const;
 
@@ -190,17 +191,17 @@ class Matrix {
     return result;
   }
 
-  int size() const { return rows_ * cols_; }
-  int rows() const { return rows_; }
-  int cols() const { return cols_; }
+  [[nodiscard]] int size() const { return rows_ * cols_; }
+  [[nodiscard]] int rows() const { return rows_; }
+  [[nodiscard]] int cols() const { return cols_; }
 
  private:
   uint rows_{0}, cols_{0};
-  mutable T* data_;
+  std::unique_ptr<T[]> data_;
 };
 
 template <typename T>
-Matrix<T>::Matrix() : data_(new T[0]) {
+Matrix<T>::Matrix() : data_(std::make_unique<T[]>(0)) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
 }
 template <typename T>
@@ -209,7 +210,7 @@ Matrix<T>::Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
   if (rows == 0 || cols == 0) {
     throw BadIndexException("Matrix constructor has 0 size");
   }
-  data_ = new T[rows * cols];
+  data_ = std::make_unique<T[]>(rows * cols);
 }
 
 template <typename T>
@@ -237,12 +238,6 @@ bool Matrix<T>::exists(uint row, uint col) const {
 }
 
 template <typename T>
-Matrix<T>::~Matrix() noexcept {
-  // std::cout << "destructor";
-  delete[] data_;
-}
-
-template <typename T>
 Matrix<T>::Matrix(const Matrix<T>& other) {
   // std::cout << "copy constructor";
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
@@ -253,9 +248,11 @@ Matrix<T>::Matrix(const Matrix<T>& other) {
 template <typename T>
 Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
   // std::cout << "copy assignment";
-  *data_ = *other.data_;
-  cols_ = other.cols_;
-  rows_ = other.rows_;
+  if (this != &other) {
+    *data_ = *other.data_;
+    cols_ = other.cols_;
+    rows_ = other.rows_;
+  }
   return *this;
 }
 

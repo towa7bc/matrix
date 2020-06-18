@@ -3,10 +3,11 @@
 
 #include <exception>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <type_traits>
 
-namespace libmatrix::inline v1 {
+namespace libMatrix::inline v1 {
 
 class BadIndexException : public std::exception {
  public:
@@ -41,9 +42,9 @@ class Vector {
   Vector<T>& operator=(const Vector<T>& /*other*/);
   Vector(Vector<T>&& /*other*/) noexcept;
   Vector<T>& operator=(Vector<T>&& /*other*/) noexcept;
-  ~Vector() noexcept;
   T& operator()(uint row);
   T operator()(uint row) const;
+  ~Vector() noexcept = default;
 
   /// vector addition
   inline friend Vector<T> operator+(const Vector<T>& vector1,
@@ -155,15 +156,15 @@ class Vector {
     return result;
   }
 
-  int size() const { return rows_; }
+  [[nodiscard]] int size() const { return rows_; }
 
  private:
   uint rows_{0};
-  mutable T* data_;
+  std::unique_ptr<T[]> data_;
 };
 
 template <typename T>
-Vector<T>::Vector() : data_(new T[0]) {
+Vector<T>::Vector() : data_(std::make_unique<T[]>(0)) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
 }
 
@@ -173,7 +174,7 @@ Vector<T>::Vector(uint rows) : rows_(rows) {
   if (rows == 0) {
     throw BadIndexException("Vector constructor has 0 size");
   }
-  data_ = new T[rows];
+  data_ = std::make_unique<T[]>(rows);
 }
 
 template <typename T>
@@ -195,11 +196,6 @@ inline T Vector<T>::operator()(uint row) const {
 }
 
 template <typename T>
-Vector<T>::~Vector() noexcept {
-  delete[] data_;
-}
-
-template <typename T>
 Vector<T>::Vector(const Vector<T>& other) {
   // std::cout << "copy constructor";
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
@@ -210,8 +206,10 @@ Vector<T>::Vector(const Vector<T>& other) {
 template <typename T>
 Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
   // std::cout << "copy assignment";
-  *data_ = *other.data_;
-  rows_ = other.rows_;
+  if (this != &other) {
+    *data_ = *other.data_;
+    rows_ = other.rows_;
+  }
   return *this;
 }
 

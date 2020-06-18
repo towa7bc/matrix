@@ -5,15 +5,15 @@
 #include "Matrix.hpp"
 
 int main() {
-  libmatrix::Matrix<float> m1(2, 2);
-  libmatrix::Matrix<float> m2(2, 2);
-  libmatrix::Matrix<float> res1(2, 2);
-  libmatrix::Matrix<float> res2(2, 2);
-  libmatrix::Vector<float> vec1(2);
-  libmatrix::Vector<float> vec2(2);
-  libmatrix::Vector<float> resVec(2);
-  libmatrix::Vector<float> crossVec(3);
-  libmatrix::Vector<float> crossVec2(3);
+  libMatrix::Matrix<float> m1(2, 2);
+  libMatrix::Matrix<float> m2(2, 2);
+  libMatrix::Matrix<float> res1(2, 2);
+  libMatrix::Matrix<float> res2(2, 2);
+  libMatrix::Vector<float> vec1(2);
+  libMatrix::Vector<float> vec2(2);
+  libMatrix::Vector<float> resVec(2);
+  libMatrix::Vector<float> crossVec(3);
+  libMatrix::Vector<float> crossVec2(3);
   float res{0};
   float scalar{2};
   m1(0, 0) = 1;

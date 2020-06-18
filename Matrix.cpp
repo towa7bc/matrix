@@ -3,7 +3,3 @@
 //
 
 #include "Matrix.hpp"
-
-// namespace libmatrix::inline v1 {
-
-//}  // namespace libmatrix::inline v1

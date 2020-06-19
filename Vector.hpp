@@ -4,9 +4,9 @@
 #include <exception>
 #include <future>
 #include <iostream>
-#include <memory>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 namespace libMatrix::inline v1 {
 
@@ -126,7 +126,7 @@ class Vector {
 
  private:
   uint rows_{0};
-  std::unique_ptr<T[]> data_;
+  std::vector<T> data_;
 };
 
 /// #region class implementation
@@ -137,7 +137,7 @@ Vector<T>::Vector(uint rows) : rows_(rows) {
   if (rows == 0) {
     throw BadIndexException("Vector constructor has 0 size");
   }
-  data_ = std::make_unique<T[]>(rows);
+  data_.resize(rows);
 }
 
 template <typename T>
@@ -162,7 +162,7 @@ template <typename T>
 Vector<T>::Vector(Vector<T>&& other) noexcept
     : data_(std::move(other.data_)), rows_(std::move(other.rows_)) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-  other.data_ = nullptr;
+  other.data_.clear();
   other.rows_ = 0;
 }
 
@@ -171,7 +171,8 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
   if (this != &other) {
     data_ = std::move(other.data_);
     rows_ = std::move(other.rows_);
-    other.data_ = nullptr;
+    // other.data_ = nullptr;
+    other.data_.clear();
     other.rows_ = 0;
   }
   return *this;

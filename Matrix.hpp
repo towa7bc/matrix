@@ -4,8 +4,8 @@
 #include <exception>
 #include <future>
 #include <iostream>
-#include <memory>
 #include <type_traits>
+#include <vector>
 
 #include "Vector.hpp"
 
@@ -120,7 +120,7 @@ class Matrix {
 
  private:
   uint rows_{0}, cols_{0};
-  std::unique_ptr<T[]> data_;
+  std::vector<T> data_;
 };
 
 /// #region class implementation
@@ -131,7 +131,7 @@ Matrix<T>::Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
   if (rows == 0 || cols == 0) {
     throw BadIndexException("Matrix constructor has 0 size");
   }
-  data_ = std::make_unique<T[]>(rows * cols);
+  data_.resize(rows * cols);
 }
 
 template <typename T>
@@ -164,7 +164,7 @@ Matrix<T>::Matrix(Matrix<T>&& other) noexcept
       rows_(std::move(other.rows_)),
       cols_(std::move(other.cols_)) {
   static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
-  other.data_ = nullptr;
+  other.data_.clear();
   other.rows_ = 0;
   other.cols_ = 0;
 }
@@ -175,7 +175,7 @@ Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
     data_ = std::move(other.data_);
     rows_ = std::move(other.rows_);
     cols_ = std::move(other.cols_);
-    other.data_ = nullptr;
+    other.data_.clear();
     other.rows_ = 0;
     other.cols_ = 0;
   }

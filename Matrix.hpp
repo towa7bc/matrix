@@ -304,9 +304,9 @@ inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
         "matrix1.cols has to be the same as matrix2.rows");
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
-    Matrix<T> result(matrix1.rows(), matrix1.cols());
+    Matrix<T> result(matrix1.rows(), matrix2.cols());
     for (auto i = 0; i < matrix1.rows(); ++i) {
-      for (auto j = 0; j < matrix1.cols(); ++j) {
+      for (auto j = 0; j < matrix2.cols(); ++j) {
         for (auto k = 0; k < matrix1.cols(); ++k) {
           result(i, j) += matrix1(i, k) * matrix2(k, j);
         }

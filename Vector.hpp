@@ -171,7 +171,6 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
   if (this != &other) {
     data_ = std::move(other.data_);
     rows_ = std::move(other.rows_);
-    // other.data_ = nullptr;
     other.data_.clear();
     other.rows_ = 0;
   }

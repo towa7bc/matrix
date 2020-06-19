@@ -5,10 +5,10 @@
 #include "Matrix.hpp"
 
 int main() {
-  libMatrix::Matrix<float> m1(2, 2);
-  libMatrix::Matrix<float> m2(2, 2);
+  libMatrix::Matrix<float> m1(3, 4);
+  libMatrix::Matrix<float> m2(4, 3);
   libMatrix::Matrix<float> res1(2, 2);
-  libMatrix::Matrix<float> res2(2, 2);
+  libMatrix::Matrix<float> res2(3, 3);
   libMatrix::Matrix<float> res3(2, 2);
 
   libMatrix::Vector<float> vec1(2);
@@ -22,10 +22,16 @@ int main() {
   m1(0, 1) = 2;
   m1(1, 0) = 3;
   m1(1, 1) = 4;
+  m1(1, 2) = 5;
+  m1(2, 1) = 6;
+  m1(2, 2) = 7;
   m2(0, 0) = 1;
   m2(0, 1) = 2;
   m2(1, 0) = 3;
   m2(1, 1) = 4;
+  m2(1, 2) = 5;
+  m2(2, 1) = 6;
+  m2(2, 2) = 7;
 
   vec1(0) = 1;
   vec1(1) = 2;
@@ -42,14 +48,14 @@ int main() {
   // res2(0, 1) = 0;
   // res2(1, 0) = 0;
   // res2(1, 1) = 0;
-  resVec = vec1 * m1;
-  res3 = 5 * m1 + 2 * m2;
-  res2 = m1 * m2 * m1;
+  // resVec = vec1 * m1;
+  // res3 = 5 * m1 + 2 * m2;
+  res2 = m1 * (-5) * m2 * scalar;
 
-  // resVec = 2 * vec1 - vec2;
+  resVec = 2 * vec1 - vec2;
   res = vec1 * vec2;
   auto d = cross(std::move(crossVec), std::move(crossVec2));
-  std::cout << std::move(res3) << '\n';
+  // std::cout << std::move(res3) << '\n';
   std::cout << res2 << '\n';
   std::cout << resVec << '\n';
   std::cout << res << '\n';

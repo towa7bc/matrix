@@ -18,8 +18,8 @@ class Matrix {
  public:
   Matrix() = delete;
   explicit Matrix(uint /*rows*/, uint /*cols*/);
-  Matrix(const Matrix<T>& /*other*/) = delete;
-  Matrix<T>& operator=(const Matrix<T>& /*other*/) = delete;
+  Matrix(const Matrix<T>& /*other*/);
+  Matrix<T>& operator=(const Matrix<T>& /*other*/);
   Matrix(Matrix<T>&& /*other*/) noexcept;
   Matrix<T>& operator=(Matrix<T>&& /*other*/) noexcept;
   ~Matrix() noexcept = default;
@@ -152,6 +152,24 @@ inline T Matrix<T>::operator()(uint row, uint col) const {
 template <Arithmetic T>
 bool Matrix<T>::exists(uint row, uint col) const {
   return (row < rows_ && col < cols_);
+}
+
+template <Arithmetic T>
+Matrix<T>::Matrix(const Matrix<T>& other)
+    : cols_(other.cols_), rows_(other.rows_) {
+  data_.resize(other.rows_ * other.cols_);
+  data_ = other.data_;
+}
+
+template <Arithmetic T>
+Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
+  if (this != &other) {
+    data_.resize(other.rows_ * other.cols_);
+    data_ = other.data_;
+    cols_ = other.cols_;
+    rows_ = other.rows_;
+  }
+  return *this;
 }
 
 template <Arithmetic T>

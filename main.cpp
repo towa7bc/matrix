@@ -52,6 +52,7 @@ int main() {
   // res3 = 5 * m1 + 2 * m2;
   res2 = m1 * (-5) * m2 * scalar;
 
+  libMatrix::Matrix<float> m6 = libMatrix::Matrix<float>(res2);
   resVec = 2 * vec1 - vec2;
   res = vec1 * vec2;
   auto d = cross(std::move(crossVec), std::move(crossVec2));
@@ -60,5 +61,6 @@ int main() {
   std::cout << resVec << '\n';
   std::cout << res << '\n';
   std::cout << d << '\n';
+  std::cout << m6 << '\n';
   return 0;
 }

@@ -35,6 +35,9 @@ class BadDimensionException : public std::exception {
 using uint = unsigned int;
 
 template <typename T>
+concept Arithmetic = std::is_arithmetic_v<T>;
+
+template <Arithmetic T>
 class Vector {
  public:
   Vector() = delete;
@@ -131,42 +134,38 @@ class Vector {
 
 /// #region class implementation
 
-template <typename T>
+template <Arithmetic T>
 Vector<T>::Vector(uint rows) : rows_(rows) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   if (rows == 0) {
     throw BadIndexException("Vector constructor has 0 size");
   }
   data_.resize(rows);
 }
 
-template <typename T>
+template <Arithmetic T>
 inline T& Vector<T>::operator()(uint row) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   if (row >= rows_) {
     throw BadIndexException("Vector constructor has 0 size");
   }
   return data_[row];
 }
 
-template <typename T>
+template <Arithmetic T>
 inline T Vector<T>::operator()(uint row) const {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   if (row >= rows_) {
     throw BadIndexException("Vector constructor has 0 size");
   }
   return data_[row];
 }
 
-template <typename T>
+template <Arithmetic T>
 Vector<T>::Vector(Vector<T>&& other) noexcept
     : data_(std::move(other.data_)), rows_(std::move(other.rows_)) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   other.data_.clear();
   other.rows_ = 0;
 }
 
-template <typename T>
+template <Arithmetic T>
 Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
   if (this != &other) {
     data_ = std::move(other.data_);
@@ -181,7 +180,7 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
 
 /// #region helper functions
 
-template <typename T>
+template <Arithmetic T>
 inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
   for (auto index{0}; index < v.size(); ++index) {
     out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
@@ -189,7 +188,7 @@ inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
   return out;
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
   if (v1.size() != 3 || v2.size() != 3) {
     throw BadDimensionException(
@@ -205,7 +204,7 @@ inline Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
   return resultFuture.get();
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Vector<T> multiply_scalar_vector(T scalarValue,
                                         const Vector<T>& vector) {
   Vector<T> result(vector.size());
@@ -215,7 +214,7 @@ inline Vector<T> multiply_scalar_vector(T scalarValue,
   return result;
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Vector<T> multiply_vector_scalar(const Vector<T>& vector,
                                         T scalarValue) {
   Vector<T> result(vector.size());
@@ -223,7 +222,7 @@ inline Vector<T> multiply_vector_scalar(const Vector<T>& vector,
   return result;
 }
 
-template <typename T>
+template <Arithmetic T>
 inline T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
@@ -238,7 +237,7 @@ inline T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
   return resultFuture.get();
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Vector<T> subtract_vectors(const Vector<T>& vector1,
                                   const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
@@ -254,7 +253,7 @@ inline Vector<T> subtract_vectors(const Vector<T>& vector1,
   return resultFuture.get();
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Vector<T> add_vectors(const Vector<T>& vector1,
                              const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {

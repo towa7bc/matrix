@@ -13,7 +13,7 @@ namespace libMatrix::inline v1 {
 
 using uint = unsigned int;
 
-template <typename T>
+template <Arithmetic T>
 class Matrix {
  public:
   Matrix() = delete;
@@ -125,51 +125,46 @@ class Matrix {
 
 /// #region class implementation
 
-template <typename T>
+template <Arithmetic T>
 Matrix<T>::Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   if (rows == 0 || cols == 0) {
     throw BadIndexException("Matrix constructor has 0 size");
   }
   data_.resize(rows * cols);
 }
 
-template <typename T>
+template <Arithmetic T>
 inline T& Matrix<T>::operator()(uint row, uint col) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   if (row >= rows_ || col >= cols_) {
     throw BadIndexException("Matrix constructor has 0 size");
   }
   return data_[cols_ * row + col];
 }
 
-template <typename T>
+template <Arithmetic T>
 inline T Matrix<T>::operator()(uint row, uint col) const {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   if (row >= rows_ || col >= cols_) {
     throw BadIndexException("Matrix constructor has 0 size");
   }
   return data_[cols_ * row + col];
 }
 
-template <typename T>
+template <Arithmetic T>
 bool Matrix<T>::exists(uint row, uint col) const {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   return (row < rows_ && col < cols_);
 }
 
-template <typename T>
+template <Arithmetic T>
 Matrix<T>::Matrix(Matrix<T>&& other) noexcept
     : data_(std::move(other.data_)),
       rows_(std::move(other.rows_)),
       cols_(std::move(other.cols_)) {
-  static_assert(std::is_arithmetic_v<T>, "Arithmetic required.");
   other.data_.clear();
   other.rows_ = 0;
   other.cols_ = 0;
 }
 
-template <typename T>
+template <Arithmetic T>
 Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
   if (this != &other) {
     data_ = std::move(other.data_);
@@ -186,7 +181,7 @@ Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
 
 /// #region helper functions
 
-template <typename T>
+template <Arithmetic T>
 inline std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
   for (auto row{0}; row < m.rows(); ++row) {
     out << '|' << ' ';
@@ -198,7 +193,7 @@ inline std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
   return out;
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
                                    const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
@@ -218,7 +213,7 @@ inline Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
   return resultFuture.get();
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Matrix<T> add_matrices(const Matrix<T>& matrix1,
                               const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
@@ -238,7 +233,7 @@ inline Matrix<T> add_matrices(const Matrix<T>& matrix1,
   return resultFuture.get();
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Matrix<T> multiply_scalar_matrix(T scalarValue,
                                         const Matrix<T>& matrix) {
   Matrix<T> result(matrix.rows(), matrix.cols());
@@ -250,7 +245,7 @@ inline Matrix<T> multiply_scalar_matrix(T scalarValue,
   return result;
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix,
                                         T scalarValue) {
   Matrix<T> result(matrix.rows(), matrix.cols());
@@ -258,7 +253,7 @@ inline Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix,
   return result;
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
                                         const Vector<T>& vector) {
   if (matrix.cols() != vector.size()) {
@@ -277,7 +272,7 @@ inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
   return resultFuture.get();
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
                                                    const Matrix<T>& matrix) {
   if (matrix.rows() != vector.size()) {
@@ -296,7 +291,7 @@ inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
   return resultFuture.get();
 }
 
-template <typename T>
+template <Arithmetic T>
 inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
                                    const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.rows()) {

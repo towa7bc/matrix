@@ -10,7 +10,7 @@
 
 namespace libMatrix::inline v1 {
 
-class BadIndexException : public std::exception {
+class BadIndexException final : public std::exception {
  public:
   explicit BadIndexException(std::string what) : what_(std::move(what)) {}
   [[nodiscard]] const char* what() const noexcept override {
@@ -21,7 +21,7 @@ class BadIndexException : public std::exception {
   std::string what_;
 };
 
-class BadDimensionException : public std::exception {
+class BadDimensionException final : public std::exception {
  public:
   explicit BadDimensionException(std::string what) : what_(std::move(what)) {}
   [[nodiscard]] const char* what() const noexcept override {

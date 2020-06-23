@@ -12,6 +12,7 @@ int main() {
   libMatrix::Matrix<float> res3(2, 2);
   libMatrix::Matrix<float> mc1(2, 2);
   libMatrix::Matrix<float> mc2(2, 2);
+  libMatrix::Matrix<float> res4(2, 2);
 
   libMatrix::Vector<float> vec1(2);
   libMatrix::Vector<float> vec2(2);
@@ -22,7 +23,7 @@ int main() {
   float scalar{2};
   mc1(0, 0) = 1;
   mc1(0, 1) = 1;
-  mc1(1, 0) = 1;
+  mc1(1, 0) = 3;
   mc1(1, 1) = 1;
   mc2(0, 0) = 1;
   mc2(0, 1) = 1;
@@ -63,7 +64,7 @@ int main() {
   // resVec = vec1 * m1;
   // res3 = 5 * m1 + 2 * m2;
   res2 = m1 * (-5) * m2 * scalar;
-
+  res4 = mc1 + mc2;
   libMatrix::Matrix<float> m6 = libMatrix::Matrix<float>(res2);
   resVec = 2 * vec1 - vec2;
   res = vec1 * vec2;
@@ -74,5 +75,6 @@ int main() {
   std::cout << res << '\n';
   std::cout << d << '\n';
   std::cout << m6 << '\n';
+  std::cout << res4 << '\n';
   return 0;
 }

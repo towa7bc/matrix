@@ -233,9 +233,7 @@ inline Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
     Matrix<T> result(matrix1.rows(), matrix1.cols());
     for (auto i = 0; i < matrix1.rows(); ++i) {
       for (auto j = 0; j < matrix1.cols(); ++j) {
-        for (auto k = 0; k < matrix1.cols(); ++k) {
-          result(i, j) = matrix1(i, k) - matrix2(k, j);
-        }
+        result(i, j) = matrix1(i, j) - matrix2(i, j);
       }
     }
     return result;
@@ -253,9 +251,7 @@ inline Matrix<T> add_matrices(const Matrix<T>& matrix1,
     Matrix<T> result(matrix1.rows(), matrix1.cols());
     for (auto i = 0; i < matrix1.rows(); ++i) {
       for (auto j = 0; j < matrix1.cols(); ++j) {
-        for (auto k = 0; k < matrix1.cols(); ++k) {
-          result(i, j) = matrix1(i, k) + matrix2(k, j);
-        }
+        result(i, j) = matrix1(i, j) + matrix2(i, j);
       }
     }
     return result;

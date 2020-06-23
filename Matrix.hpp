@@ -32,6 +32,18 @@ class Matrix {
   [[nodiscard]] int rows() const { return rows_; }
   [[nodiscard]] int cols() const { return cols_; }
 
+  /// matrix equality
+  inline friend bool operator==(const Matrix<T>& matrix1,
+                                const Matrix<T>& matrix2) {
+    return equal_matrices(matrix1, matrix2);
+  }
+
+  /// matrix inequality
+  inline friend bool operator!=(const Matrix<T>& matrix1,
+                                const Matrix<T>& matrix2) {
+    return !(matrix1 == matrix2);
+  }
+
   /// multiply two matrices
   inline friend Matrix<T> operator*(const Matrix<T>& matrix1,
                                     const Matrix<T>& matrix2) {
@@ -328,6 +340,21 @@ inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
     return result;
   });
   return resultFuture.get();
+}
+
+template <Arithmetic T>
+inline bool equal_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
+  if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
+    throw BadDimensionException("The matrix dimensions have to be the same.");
+  }
+  bool returnValue =
+      matrix1.cols() == matrix2.cols() || matrix1.rows() == matrix2.rows();
+  for (auto i = 0; i < matrix1.rows(); ++i) {
+    for (auto j = 0; j < matrix1.cols(); ++j) {
+      returnValue &= matrix1(i, j) == matrix2(i, j);
+    }
+  }
+  return returnValue;
 }
 
 /// #endregion helper functions

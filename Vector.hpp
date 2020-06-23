@@ -53,6 +53,18 @@ class Vector {
 
   [[nodiscard]] int size() const { return rows_; }
 
+  /// vector equality
+  inline friend bool operator==(const Vector<T>& vector1,
+                                const Vector<T>& vector2) {
+    return equal_vectors(vector1, vector2);
+  }
+
+  /// vector inequality
+  inline friend bool operator!=(const Vector<T>& vector1,
+                                const Vector<T>& vector2) {
+    return !(vector1 == vector2);
+  }
+
   /// vector addition
   inline friend Vector<T> operator+(const Vector<T>& vector1,
                                     const Vector<T>& vector2) {
@@ -283,6 +295,18 @@ inline Vector<T> add_vectors(const Vector<T>& vector1,
     return result;
   });
   return resultFuture.get();
+}
+
+template <Arithmetic T>
+inline bool equal_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
+  if (vector1.size() != vector2.size()) {
+    throw BadDimensionException("The vector dimensions have to be the same.");
+  }
+  bool returnValue = vector1.size() == vector2.size();
+  for (int index{0}; index < vector1.size(); ++index) {
+    returnValue &= vector1(index) == vector2(index);
+  }
+  return returnValue;
 }
 
 /// #endregion helper functions

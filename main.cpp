@@ -10,6 +10,8 @@ int main() {
   libMatrix::Matrix<float> res1(2, 2);
   libMatrix::Matrix<float> res2(3, 3);
   libMatrix::Matrix<float> res3(2, 2);
+  libMatrix::Matrix<float> mc1(2, 2);
+  libMatrix::Matrix<float> mc2(2, 2);
 
   libMatrix::Vector<float> vec1(2);
   libMatrix::Vector<float> vec2(2);
@@ -18,6 +20,15 @@ int main() {
   libMatrix::Vector<float> crossVec2(3);
   float res{0};
   float scalar{2};
+  mc1(0, 0) = 1;
+  mc1(0, 1) = 1;
+  mc1(1, 0) = 1;
+  mc1(1, 1) = 1;
+  mc2(0, 0) = 1;
+  mc2(0, 1) = 1;
+  mc2(1, 0) = 1;
+  mc2(1, 1) = 1;
+
   m1(0, 0) = 1;
   m1(0, 1) = 2;
   m1(1, 0) = 3;
@@ -36,8 +47,9 @@ int main() {
   vec1(0) = 1;
   vec1(1) = 2;
   vec2(0) = 1;
-  vec2(1) = 3;
-
+  vec2(1) = 4;
+  // bool equ = vec1 != vec2;
+  bool equ2 = mc1 == mc2;
   crossVec(0) = 1;
   crossVec(1) = 2;
   crossVec(2) = 3;

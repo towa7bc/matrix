@@ -39,6 +39,10 @@ concept Arithmetic = std::is_arithmetic_v<T>;
 
 template <Arithmetic T>
 class Vector {
+ private:
+  uint rows_{0};
+  std::vector<T> data_;
+
  public:
   Vector() = delete;
   explicit Vector(uint /*rows*/);
@@ -46,7 +50,7 @@ class Vector {
   Vector<T>& operator=(const Vector<T>& /*other*/);
   Vector(Vector<T>&& /*other*/) noexcept;
   Vector<T>& operator=(Vector<T>&& /*other*/) noexcept;
-  ~Vector() noexcept = default;
+  ~Vector() = default;
 
   T& operator()(uint /*row*/);
   T operator()(uint /*row*/) const;
@@ -138,10 +142,6 @@ class Vector {
   inline friend std::ostream& operator<<(std::ostream& out, Vector<T>&& v) {
     return print_vector(out, std::move(v));
   }
-
- private:
-  uint rows_{0};
-  std::vector<T> data_;
 };
 
 /// #region class implementation

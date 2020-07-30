@@ -15,6 +15,10 @@ using uint = unsigned int;
 
 template <Arithmetic T>
 class Matrix {
+ private:
+  uint rows_{0}, cols_{0};
+  std::vector<T> data_;
+
  public:
   Matrix() = delete;
   explicit Matrix(uint /*rows*/, uint /*cols*/);
@@ -22,7 +26,7 @@ class Matrix {
   Matrix<T>& operator=(const Matrix<T>& /*other*/);
   Matrix(Matrix<T>&& /*other*/) noexcept;
   Matrix<T>& operator=(Matrix<T>&& /*other*/) noexcept;
-  ~Matrix() noexcept = default;
+  ~Matrix() = default;
 
   T& operator()(uint /*row*/, uint /*col*/);
   T operator()(uint /*row*/, uint /*col*/) const;
@@ -129,10 +133,6 @@ class Matrix {
   inline friend std::ostream& operator<<(std::ostream& out, Matrix<T>&& m) {
     return print_matrix(out, std::move(m));
   }
-
- private:
-  uint rows_{0}, cols_{0};
-  std::vector<T> data_;
 };
 
 /// #region class implementation

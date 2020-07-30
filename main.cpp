@@ -1,6 +1,6 @@
 #include <iostream>
+#include <string>
 #include <type_traits>
-
 //#include "Vector.hpp"
 #include "Matrix.hpp"
 
@@ -9,7 +9,7 @@ int main() {
   libMatrix::Matrix<float> m2(4, 3);
   libMatrix::Matrix<float> res1(2, 2);
   libMatrix::Matrix<float> res2(3, 3);
-  libMatrix::Matrix<float> res3(2, 2);
+  // libMatrix::Matrix<std::string> res3(2, 2);
   libMatrix::Matrix<float> mc1(2, 2);
   libMatrix::Matrix<float> mc2(2, 2);
   libMatrix::Matrix<float> res4(2, 2);

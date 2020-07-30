@@ -37,100 +37,52 @@ class Matrix {
   [[nodiscard]] int cols() const { return cols_; }
 
   /// matrix equality
-  inline friend bool operator==(const Matrix<T>& matrix1,
-                                const Matrix<T>& matrix2) {
-    return equal_matrices(matrix1, matrix2);
+  inline friend bool operator==(Matrix<T> matrix1, Matrix<T> matrix2) {
+    return equal_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// matrix inequality
-  inline friend bool operator!=(const Matrix<T>& matrix1,
-                                const Matrix<T>& matrix2) {
-    return !(matrix1 == matrix2);
+  inline friend bool operator!=(Matrix<T> matrix1, Matrix<T> matrix2) {
+    return !(std::move(matrix1) == std::move(matrix2));
   }
 
   /// multiply two matrices
-  inline friend Matrix<T> operator*(const Matrix<T>& matrix1,
-                                    const Matrix<T>& matrix2) {
-    return multiply_matrices(matrix1, matrix2);
-  }
-
-  /// multiply two matrices movable
-  inline friend Matrix<T> operator*(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
+  inline friend Matrix<T> operator*(Matrix<T> matrix1, Matrix<T> matrix2) {
     return multiply_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// multiply a matrix and a vector
-  inline friend Vector<T> operator*(const Matrix<T>& matrix,
-                                    const Vector<T>& vector) {
-    return multiply_matrix_vector(matrix, vector);
-  }
-  /// multiply a transposed vector and a matrix
-  inline friend Vector<T> operator*(const Vector<T>& vector,
-                                    const Matrix<T>& matrix) {
-    return multiply_matrix_transposed_vector(vector, matrix);
-  }
-
-  /// multiply a matrix and a vector movable
-  inline friend Vector<T> operator*(Matrix<T>&& matrix, Vector<T>&& vector) {
+  inline friend Vector<T> operator*(Matrix<T> matrix, Vector<T> vector) {
     return multiply_matrix_vector(std::move(matrix), std::move(vector));
   }
-
-  /// multiply a transposed vector and a matrix movable
-  inline friend Vector<T> operator*(Vector<T>&& vector, Matrix<T>&& matrix) {
+  /// multiply a transposed vector and a matrix
+  inline friend Vector<T> operator*(Vector<T> vector, Matrix<T> matrix) {
     return multiply_matrix_transposed_vector(std::move(vector),
                                              std::move(matrix));
   }
 
   /// multiply a scalar with a matrix
-  inline friend Matrix<T> operator*(T scalarValue, const Matrix<T>& matrix) {
-    return multiply_scalar_matrix(scalarValue, matrix);
-  }
-
-  /// multiply a matrix with a scalar
-  inline friend Matrix<T> operator*(const Matrix<T>& matrix, T scalarValue) {
-    return multiply_matrix_scalar(matrix, scalarValue);
-  }
-
-  /// multiply a scalar with a matrix movable
-  inline friend Matrix<T> operator*(T scalarValue, Matrix<T>&& matrix) {
+  inline friend Matrix<T> operator*(T scalarValue, Matrix<T> matrix) {
     return multiply_scalar_matrix(scalarValue, std::move(matrix));
   }
 
-  /// multiply a matrix with a scalar movable
-  inline friend Matrix<T> operator*(Matrix<T>&& matrix, T scalarValue) {
+  /// multiply a matrix with a scalar
+  inline friend Matrix<T> operator*(Matrix<T> matrix, T scalarValue) {
     return multiply_matrix_scalar(std::move(matrix), scalarValue);
   }
 
   /// add two matrices
-  inline friend Matrix<T> operator+(const Matrix<T>& matrix1,
-                                    const Matrix<T>& matrix2) {
-    return add_matrices(matrix1, matrix2);
-  }
-
-  /// add two matrices movable
-  inline friend Matrix<T> operator+(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
+  inline friend Matrix<T> operator+(Matrix<T> matrix1, Matrix<T> matrix2) {
     return add_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// subtract two matrices
-  inline friend Matrix<T> operator-(const Matrix<T>& matrix1,
-                                    const Matrix<T>& matrix2) {
-    return subtract_matrices(matrix1, matrix2);
-  }
-
-  /// subtract two matrices movable
-  inline friend Matrix<T> operator-(Matrix<T>&& matrix1, Matrix<T>&& matrix2) {
+  inline friend Matrix<T> operator-(Matrix<T> matrix1, Matrix<T> matrix2) {
     return subtract_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// print a complete matrix
-  inline friend std::ostream& operator<<(std::ostream& out,
-                                         const Matrix<T>& m) {
-    return print_matrix(out, m);
-  }
-
-  /// print a complete matrix movable
-  inline friend std::ostream& operator<<(std::ostream& out, Matrix<T>&& m) {
+  inline friend std::ostream& operator<<(std::ostream& out, Matrix<T> m) {
     return print_matrix(out, std::move(m));
   }
 };

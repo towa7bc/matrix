@@ -59,88 +59,47 @@ class Vector {
   [[nodiscard]] int size() const { return rows_; }
 
   /// vector equality
-  inline friend bool operator==(const Vector<T>& vector1,
-                                const Vector<T>& vector2) {
-    return equal_vectors(vector1, vector2);
+  inline friend bool operator==(Vector<T> vector1, Vector<T> vector2) {
+    return equal_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// vector inequality
-  inline friend bool operator!=(const Vector<T>& vector1,
-                                const Vector<T>& vector2) {
-    return !(vector1 == vector2);
+  inline friend bool operator!=(Vector<T> vector1, Vector<T> vector2) {
+    return !(std::move(vector1) == std::move(vector2));
   }
 
   /// vector addition
-  inline friend Vector<T> operator+(const Vector<T>& vector1,
-                                    const Vector<T>& vector2) {
-    return add_vectors(vector1, vector2);
-  }
-
-  /// vector addition movable
-  inline friend Vector<T> operator+(Vector<T>&& vector1, Vector<T>&& vector2) {
+  inline friend Vector<T> operator+(Vector<T> vector1, Vector<T> vector2) {
     return add_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// vector subtraction
-  inline friend Vector<T> operator-(const Vector<T>& vector1,
-                                    const Vector<T>& vector2) {
-    return subtract_vectors(vector1, vector2);
-  }
-
-  /// vector subtraction movable
-  inline friend Vector<T> operator-(Vector<T>&& vector1, Vector<T>&& vector2) {
+  inline friend Vector<T> operator-(Vector<T> vector1, Vector<T> vector2) {
     return subtract_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// scalar multiplication
-  inline friend T operator*(const Vector<T>& vector1,
-                            const Vector<T>& vector2) {
-    return scalar_product(vector1, vector2);
-  }
-
-  /// scalar multiplication movable
-  inline friend T operator*(Vector<T>&& vector1, Vector<T>&& vector2) {
+  inline friend T operator*(Vector<T> vector1, Vector<T> vector2) {
     return scalar_product(std::move(vector1), std::move(vector2));
   }
 
   /// multiply a scalar value with a vector
-  inline friend Vector<T> operator*(T scalarValue, const Vector<T>& vector) {
-    return multiply_scalar_vector(scalarValue, vector);
-  }
-
-  /// multiply a vector with a scalar value
-  inline friend Vector<T> operator*(const Vector<T>& vector, T scalarValue) {
-    return multiply_vector_scalar(vector, scalarValue);
-  }
-
-  /// multiply a vector with a scalar value movable
-  inline friend Vector<T> operator*(Vector<T>&& vector, T scalarValue) {
-    return multiply_vector_scalar(std::move(vector), scalarValue);
-  }
-
-  /// multiply a scalar value with a vector value movable
-  inline friend Vector<T> operator*(T scalarValue, Vector<T>&& vector) {
+  inline friend Vector<T> operator*(T scalarValue, Vector<T> vector) {
     return multiply_scalar_vector(scalarValue, std::move(vector));
   }
 
-  /// calculate the cross product of two 3d vectors
-  inline friend Vector<T> cross(const Vector<T>& v1, const Vector<T>& v2) {
-    return calc_cross(v1, v2);
+  /// multiply a vector with a scalar value
+  inline friend Vector<T> operator*(Vector<T> vector, T scalarValue) {
+    return multiply_vector_scalar(std::move(vector), scalarValue);
   }
 
-  /// calculate the cross product of two 3d vectors movable
-  inline friend Vector<T> cross(Vector<T>&& v1, Vector<T>&& v2) {
+  /// calculate the cross product of two 3d vectors
+  inline friend Vector<T> cross(Vector<T> v1, Vector<T> v2) {
     return calc_cross(std::move(v1), std::move(v2));
   }
 
   /// print a complete vector
-  inline friend std::ostream& operator<<(std::ostream& out,
-                                         const Vector<T>& v) {
-    return print_vector(out, v);
-  }
-
-  /// print a complete vector movable
-  inline friend std::ostream& operator<<(std::ostream& out, Vector<T>&& v) {
+  inline friend std::ostream& operator<<(std::ostream& out, Vector<T> v) {
     return print_vector(out, std::move(v));
   }
 };

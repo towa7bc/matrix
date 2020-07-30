@@ -1,6 +1,7 @@
 #ifndef MATRIX_VECTOR_HPP
 #define MATRIX_VECTOR_HPP
 
+#include <concepts>
 #include <exception>
 #include <future>
 #include <iostream>
@@ -35,9 +36,9 @@ class BadDimensionException final : public std::exception {
 using uint = unsigned int;
 
 template <typename T>
-concept Arithmetic = std::is_arithmetic_v<T>;
+concept ArithmeticNoBool = std::is_arithmetic_v<T> && !std::is_same_v<bool, T>;
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 class Vector {
  private:
   uint rows_{0};
@@ -146,7 +147,7 @@ class Vector {
 
 /// #region class implementation
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 Vector<T>::Vector(uint rows) : rows_(rows) {
   if (rows == 0) {
     throw BadIndexException("Vector constructor has 0 size");
@@ -154,7 +155,7 @@ Vector<T>::Vector(uint rows) : rows_(rows) {
   data_.resize(rows);
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline T& Vector<T>::operator()(uint row) {
   if (row >= rows_) {
     throw BadIndexException("Vector constructor has 0 size");
@@ -162,7 +163,7 @@ inline T& Vector<T>::operator()(uint row) {
   return data_[row];
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline T Vector<T>::operator()(uint row) const {
   if (row >= rows_) {
     throw BadIndexException("Vector constructor has 0 size");
@@ -170,13 +171,13 @@ inline T Vector<T>::operator()(uint row) const {
   return data_[row];
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 Vector<T>::Vector(const Vector<T>& other) : rows_(other.rows_) {
   data_.resize(other.rows_);
   data_ = other.data_;
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
   if (this != &other) {
     data_.resize(other.rows_);
@@ -186,14 +187,14 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
   return *this;
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 Vector<T>::Vector(Vector<T>&& other) noexcept
     : data_(std::move(other.data_)), rows_(std::move(other.rows_)) {
   other.data_.clear();
   other.rows_ = 0;
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
   if (this != &other) {
     data_ = std::move(other.data_);
@@ -208,7 +209,7 @@ Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
 
 /// #region helper functions
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
   for (auto index{0}; index < v.size(); ++index) {
     out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
@@ -216,7 +217,7 @@ inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
   return out;
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
   if (v1.size() != 3 || v2.size() != 3) {
     throw BadDimensionException(
@@ -232,7 +233,7 @@ inline Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
   return resultFuture.get();
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline Vector<T> multiply_scalar_vector(T scalarValue,
                                         const Vector<T>& vector) {
   Vector<T> result(vector.size());
@@ -242,7 +243,7 @@ inline Vector<T> multiply_scalar_vector(T scalarValue,
   return result;
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline Vector<T> multiply_vector_scalar(const Vector<T>& vector,
                                         T scalarValue) {
   Vector<T> result(vector.size());
@@ -250,7 +251,7 @@ inline Vector<T> multiply_vector_scalar(const Vector<T>& vector,
   return result;
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
@@ -265,7 +266,7 @@ inline T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
   return resultFuture.get();
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline Vector<T> subtract_vectors(const Vector<T>& vector1,
                                   const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
@@ -281,7 +282,7 @@ inline Vector<T> subtract_vectors(const Vector<T>& vector1,
   return resultFuture.get();
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline Vector<T> add_vectors(const Vector<T>& vector1,
                              const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
@@ -297,7 +298,7 @@ inline Vector<T> add_vectors(const Vector<T>& vector1,
   return resultFuture.get();
 }
 
-template <Arithmetic T>
+template <ArithmeticNoBool T>
 inline bool equal_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");

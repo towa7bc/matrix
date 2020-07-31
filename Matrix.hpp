@@ -20,13 +20,7 @@ class Matrix {
   std::vector<T> data_;
 
  public:
-  Matrix() = delete;
   explicit Matrix(uint /*rows*/, uint /*cols*/);
-  Matrix(const Matrix<T>& /*other*/);
-  Matrix<T>& operator=(const Matrix<T>& /*other*/);
-  Matrix(Matrix<T>&& /*other*/) noexcept;
-  Matrix<T>& operator=(Matrix<T>&& /*other*/) noexcept;
-  ~Matrix() = default;
 
   T& operator()(uint /*row*/, uint /*col*/);
   T operator()(uint /*row*/, uint /*col*/) const;
@@ -116,47 +110,6 @@ inline T Matrix<T>::operator()(uint row, uint col) const {
 template <ArithmeticNoBool T>
 bool Matrix<T>::exists(uint row, uint col) const {
   return (row < rows_ && col < cols_);
-}
-
-template <ArithmeticNoBool T>
-Matrix<T>::Matrix(const Matrix<T>& other)
-    : cols_(other.cols_), rows_(other.rows_) {
-  data_.resize(other.rows_ * other.cols_);
-  data_ = other.data_;
-}
-
-template <ArithmeticNoBool T>
-Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
-  if (this != &other) {
-    data_.resize(other.rows_ * other.cols_);
-    data_ = other.data_;
-    cols_ = other.cols_;
-    rows_ = other.rows_;
-  }
-  return *this;
-}
-
-template <ArithmeticNoBool T>
-Matrix<T>::Matrix(Matrix<T>&& other) noexcept
-    : data_(std::move(other.data_)),
-      rows_(std::move(other.rows_)),
-      cols_(std::move(other.cols_)) {
-  other.data_.clear();
-  other.rows_ = 0;
-  other.cols_ = 0;
-}
-
-template <ArithmeticNoBool T>
-Matrix<T>& Matrix<T>::operator=(Matrix<T>&& other) noexcept {
-  if (this != &other) {
-    data_ = std::move(other.data_);
-    rows_ = std::move(other.rows_);
-    cols_ = std::move(other.cols_);
-    other.data_.clear();
-    other.rows_ = 0;
-    other.cols_ = 0;
-  }
-  return *this;
 }
 
 /// #endregion class implementation

@@ -45,13 +45,7 @@ class Vector {
   std::vector<T> data_;
 
  public:
-  Vector() = delete;
   explicit Vector(uint /*rows*/);
-  Vector(const Vector<T>& /*other*/);
-  Vector<T>& operator=(const Vector<T>& /*other*/);
-  Vector(Vector<T>&& /*other*/) noexcept;
-  Vector<T>& operator=(Vector<T>&& /*other*/) noexcept;
-  ~Vector() = default;
 
   T& operator()(uint /*row*/);
   T operator()(uint /*row*/) const;
@@ -128,40 +122,6 @@ inline T Vector<T>::operator()(uint row) const {
     throw BadIndexException("Vector constructor has 0 size");
   }
   return data_[row];
-}
-
-template <ArithmeticNoBool T>
-Vector<T>::Vector(const Vector<T>& other) : rows_(other.rows_) {
-  data_.resize(other.rows_);
-  data_ = other.data_;
-}
-
-template <ArithmeticNoBool T>
-Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
-  if (this != &other) {
-    data_.resize(other.rows_);
-    data_ = other.data_;
-    rows_ = other.rows_;
-  }
-  return *this;
-}
-
-template <ArithmeticNoBool T>
-Vector<T>::Vector(Vector<T>&& other) noexcept
-    : data_(std::move(other.data_)), rows_(std::move(other.rows_)) {
-  other.data_.clear();
-  other.rows_ = 0;
-}
-
-template <ArithmeticNoBool T>
-Vector<T>& Vector<T>::operator=(Vector<T>&& other) noexcept {
-  if (this != &other) {
-    data_ = std::move(other.data_);
-    rows_ = std::move(other.rows_);
-    other.data_.clear();
-    other.rows_ = 0;
-  }
-  return *this;
 }
 
 /// #endregion class implementation

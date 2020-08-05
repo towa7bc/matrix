@@ -76,7 +76,7 @@ int main() {
   vec1(1) = 2;
   vec2(0) = 1;
   vec2(1) = 4;
-  bool equ = vec1 == vec2;
+  bool equ = vec1 != vec2;
   bool equ2 = mc1 == mc2;
   crossVec(0) = 1;
   crossVec(1) = 2;

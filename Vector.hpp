@@ -35,62 +35,62 @@ class BadDimensionException final : public std::exception {
 
 using uint = unsigned int;
 
-template <typename T>
+template <typename Vec>
 class IVectorEqualityComparable {
  private:
   /// vector equality
-  friend bool operator==(T vector1, T vector2) {
+  friend bool operator==(Vec vector1, Vec vector2) {
     return equal_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// vector inequality
-  friend bool operator!=(T vector1, T vector2) {
+  friend bool operator!=(Vec vector1, Vec vector2) {
     return !(std::move(vector1) == std::move(vector2));
   }
 };
 
-template <typename T, typename S>
+template <typename Vec, typename Scalar>
 class IVectorArithmeticOperations {
  private:
   /// vector addition
-  friend T operator+(T vector1, T vector2) {
+  friend Vec operator+(Vec vector1, Vec vector2) {
     return add_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// vector subtraction
-  friend T operator-(T vector1, T vector2) {
+  friend Vec operator-(Vec vector1, Vec vector2) {
     return subtract_vectors(std::move(vector1), std::move(vector2));
   }
 
   /// scalar multiplication
-  friend S operator*(T vector1, T vector2) {
+  friend Scalar operator*(Vec vector1, Vec vector2) {
     return scalar_product(std::move(vector1), std::move(vector2));
   }
 
   /// multiply a scalar value with a vector
-  friend T operator*(S scalarValue, T vector) {
+  friend Vec operator*(Scalar scalarValue, Vec vector) {
     return multiply_scalar_vector(scalarValue, std::move(vector));
   }
 
   /// multiply a vector with a scalar value
-  friend T operator*(T vector, S scalarValue) {
+  friend Vec operator*(Vec vector, Scalar scalarValue) {
     return multiply_vector_scalar(std::move(vector), scalarValue);
   }
 
   /// calculate the cross product of two 3d vectors
-  friend T cross(T v1, T v2) {
+  friend Vec cross(Vec v1, Vec v2) {
     return calc_cross(std::move(v1), std::move(v2));
   }
 };
 
-template <typename T>
+template <typename Vec>
 class IVectorGenericOperations {
  private:
   /// swap vectors
-  friend void swap(T& v1, T& v2) noexcept { v1.swap(v2); }
+  friend void swap(Vec& v1, Vec& v2) noexcept { v1.swap(v2); }
 
   /// print a complete vector
-  friend std::ostream& operator<<(std::ostream& out, T v) {
+  friend std::ostream& operator<<(std::ostream& out, Vec v) {
     return print_vector(out, std::move(v));
   }
 };

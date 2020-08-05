@@ -11,67 +11,67 @@
 
 namespace libMatrix::inline v1 {
 
-template <typename T>
+template <typename Mat>
 class IMatrixEqualityComparable {
  private:
   /// matrix equality
-  friend bool operator==(T matrix1, T matrix2) {
+  friend bool operator==(Mat matrix1, Mat matrix2) {
     return equal_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// matrix inequality
-  friend bool operator!=(T matrix1, T matrix2) {
+  friend bool operator!=(Mat matrix1, Mat matrix2) {
     return !(std::move(matrix1) == std::move(matrix2));
   }
 };
 
-template <typename T, typename Vec, typename Scalar>
+template <typename Mat, typename Vec, typename Scalar>
 class IMatrixArithmeticOperations {
  private:
   /// multiply two matrices
-  friend T operator*(T matrix1, T matrix2) {
+  friend Mat operator*(Mat matrix1, Mat matrix2) {
     return multiply_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// multiply a matrix and a vector
-  friend Vec operator*(T matrix, Vec vector) {
+  friend Vec operator*(Mat matrix, Vec vector) {
     return multiply_matrix_vector(std::move(matrix), std::move(vector));
   }
   /// multiply a transposed vector and a matrix
-  friend Vec operator*(Vec vector, T matrix) {
+  friend Vec operator*(Vec vector, Mat matrix) {
     return multiply_matrix_transposed_vector(std::move(vector),
                                              std::move(matrix));
   }
 
   /// multiply a scalar with a matrix
-  friend T operator*(Scalar scalarValue, T matrix) {
+  friend Mat operator*(Scalar scalarValue, Mat matrix) {
     return multiply_scalar_matrix(scalarValue, std::move(matrix));
   }
 
   /// multiply a matrix with a scalar
-  friend T operator*(T matrix, Scalar scalarValue) {
+  friend Mat operator*(Mat matrix, Scalar scalarValue) {
     return multiply_matrix_scalar(std::move(matrix), scalarValue);
   }
 
   /// add two matrices
-  friend T operator+(T matrix1, T matrix2) {
+  friend Mat operator+(Mat matrix1, Mat matrix2) {
     return add_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// subtract two matrices
-  friend T operator-(T matrix1, T matrix2) {
+  friend Mat operator-(Mat matrix1, Mat matrix2) {
     return subtract_matrices(std::move(matrix1), std::move(matrix2));
   }
 };
 
-template <typename T>
+template <typename Mat>
 class IMatrixGenericOperations {
  private:
   /// swap matrices
-  friend void swap(T& m1, T& m2) noexcept { m1.swap(m2); }
+  friend void swap(Mat& m1, Mat& m2) noexcept { m1.swap(m2); }
 
   /// print a complete matrix
-  friend std::ostream& operator<<(std::ostream& out, T m) {
+  friend std::ostream& operator<<(std::ostream& out, Mat m) {
     return print_matrix(out, std::move(m));
   }
 };

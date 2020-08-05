@@ -11,113 +11,121 @@
 
 namespace libMatrix::inline v1 {
 
-using uint = unsigned int;
-
-template <ArithmeticNoBool T>
-class Matrix {
+template <typename T>
+class IMatrixEqualityComparable {
  private:
-  uint rows_{0}, cols_{0};
-  std::vector<T> data_;
-
- public:
-  explicit Matrix(uint /*rows*/, uint /*cols*/);
-
-  T& operator()(uint /*row*/, uint /*col*/);
-  T operator()(uint /*row*/, uint /*col*/) const;
-
-  [[nodiscard]] bool exists(uint /*row*/, uint /*col*/) const;
-  [[nodiscard]] int size() const { return rows_ * cols_; }
-  [[nodiscard]] int rows() const { return rows_; }
-  [[nodiscard]] int cols() const { return cols_; }
-
   /// matrix equality
-  inline friend bool operator==(Matrix<T> matrix1, Matrix<T> matrix2) {
+  friend bool operator==(T matrix1, T matrix2) {
     return equal_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// matrix inequality
-  inline friend bool operator!=(Matrix<T> matrix1, Matrix<T> matrix2) {
+  friend bool operator!=(T matrix1, T matrix2) {
     return !(std::move(matrix1) == std::move(matrix2));
   }
+};
 
+template <typename T, typename Vec, typename Scalar>
+class IMatrixArithmeticOperations {
+ private:
   /// multiply two matrices
-  inline friend Matrix<T> operator*(Matrix<T> matrix1, Matrix<T> matrix2) {
+  friend T operator*(T matrix1, T matrix2) {
     return multiply_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// multiply a matrix and a vector
-  inline friend Vector<T> operator*(Matrix<T> matrix, Vector<T> vector) {
+  friend Vec operator*(T matrix, Vec vector) {
     return multiply_matrix_vector(std::move(matrix), std::move(vector));
   }
   /// multiply a transposed vector and a matrix
-  inline friend Vector<T> operator*(Vector<T> vector, Matrix<T> matrix) {
+  friend Vec operator*(Vec vector, T matrix) {
     return multiply_matrix_transposed_vector(std::move(vector),
                                              std::move(matrix));
   }
 
   /// multiply a scalar with a matrix
-  inline friend Matrix<T> operator*(T scalarValue, Matrix<T> matrix) {
+  friend T operator*(Scalar scalarValue, T matrix) {
     return multiply_scalar_matrix(scalarValue, std::move(matrix));
   }
 
   /// multiply a matrix with a scalar
-  inline friend Matrix<T> operator*(Matrix<T> matrix, T scalarValue) {
+  friend T operator*(T matrix, Scalar scalarValue) {
     return multiply_matrix_scalar(std::move(matrix), scalarValue);
   }
 
   /// add two matrices
-  inline friend Matrix<T> operator+(Matrix<T> matrix1, Matrix<T> matrix2) {
+  friend T operator+(T matrix1, T matrix2) {
     return add_matrices(std::move(matrix1), std::move(matrix2));
   }
 
   /// subtract two matrices
-  inline friend Matrix<T> operator-(Matrix<T> matrix1, Matrix<T> matrix2) {
+  friend T operator-(T matrix1, T matrix2) {
     return subtract_matrices(std::move(matrix1), std::move(matrix2));
   }
+};
+
+template <typename T>
+class IMatrixGenericOperations {
+ private:
+  /// swap matrices
+  friend void swap(T& m1, T& m2) noexcept { m1.swap(m2); }
 
   /// print a complete matrix
-  inline friend std::ostream& operator<<(std::ostream& out, Matrix<T> m) {
+  friend std::ostream& operator<<(std::ostream& out, T m) {
     return print_matrix(out, std::move(m));
   }
 };
 
-/// #region class implementation
-
 template <ArithmeticNoBool T>
-Matrix<T>::Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
-  if (rows == 0 || cols == 0) {
-    throw BadIndexException("Matrix constructor has 0 size");
+class Matrix : private IMatrixEqualityComparable<Matrix<T>>,
+               private IMatrixArithmeticOperations<Matrix<T>, Vector<T>, T>,
+               private IMatrixGenericOperations<Matrix<T>> {
+ private:
+  uint rows_{0}, cols_{0};
+  std::vector<T> data_;
+
+ public:
+  explicit Matrix(uint rows, uint cols) : rows_(rows), cols_(cols) {
+    if (rows == 0 || cols == 0) {
+      throw BadIndexException("Matrix constructor has 0 size");
+    }
+    data_.resize(rows * cols);
   }
-  data_.resize(rows * cols);
-}
 
-template <ArithmeticNoBool T>
-inline T& Matrix<T>::operator()(uint row, uint col) {
-  if (row >= rows_ || col >= cols_) {
-    throw BadIndexException("Matrix constructor has 0 size");
+  T& operator()(uint row, uint col) {
+    if (row >= rows_ || col >= cols_) {
+      throw BadIndexException("Matrix constructor has 0 size");
+    }
+    return data_[cols_ * row + col];
   }
-  return data_[cols_ * row + col];
-}
 
-template <ArithmeticNoBool T>
-inline T Matrix<T>::operator()(uint row, uint col) const {
-  if (row >= rows_ || col >= cols_) {
-    throw BadIndexException("Matrix constructor has 0 size");
+  T operator()(uint row, uint col) const {
+    if (row >= rows_ || col >= cols_) {
+      throw BadIndexException("Matrix constructor has 0 size");
+    }
+    return data_[cols_ * row + col];
   }
-  return data_[cols_ * row + col];
-}
 
-template <ArithmeticNoBool T>
-bool Matrix<T>::exists(uint row, uint col) const {
-  return (row < rows_ && col < cols_);
-}
+  [[nodiscard]] bool exists(uint row, uint col) const {
+    return (row < rows_ && col < cols_);
+  }
 
-/// #endregion class implementation
+  [[nodiscard]] int size() const { return rows_ * cols_; }
+  [[nodiscard]] int rows() const { return rows_; }
+  [[nodiscard]] int cols() const { return cols_; }
+
+  void swap(Matrix& rhs) noexcept {
+    using std::swap;
+    swap(data_, rhs.data_);
+    swap(rows_, rhs.rows_);
+    swap(cols_, rhs.cols_);
+  }
+};
 
 /// #region helper functions
 
 template <ArithmeticNoBool T>
-inline std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
+std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
   for (auto row{0}; row < m.rows(); ++row) {
     out << '|' << ' ';
     for (auto col{0}; col < m.cols(); ++col) {
@@ -129,8 +137,8 @@ inline std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
 }
 
 template <ArithmeticNoBool T>
-inline Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
-                                   const Matrix<T>& matrix2) {
+Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
+                            const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
   }
@@ -147,8 +155,7 @@ inline Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
 }
 
 template <ArithmeticNoBool T>
-inline Matrix<T> add_matrices(const Matrix<T>& matrix1,
-                              const Matrix<T>& matrix2) {
+Matrix<T> add_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
   }
@@ -165,8 +172,7 @@ inline Matrix<T> add_matrices(const Matrix<T>& matrix1,
 }
 
 template <ArithmeticNoBool T>
-inline Matrix<T> multiply_scalar_matrix(T scalarValue,
-                                        const Matrix<T>& matrix) {
+Matrix<T> multiply_scalar_matrix(T scalarValue, const Matrix<T>& matrix) {
   Matrix<T> result(matrix.rows(), matrix.cols());
   for (auto i = 0; i < matrix.rows(); ++i) {
     for (auto j = 0; j < matrix.cols(); ++j) {
@@ -177,16 +183,15 @@ inline Matrix<T> multiply_scalar_matrix(T scalarValue,
 }
 
 template <ArithmeticNoBool T>
-inline Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix,
-                                        T scalarValue) {
+Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix, T scalarValue) {
   Matrix<T> result(matrix.rows(), matrix.cols());
   result = scalarValue * matrix;
   return result;
 }
 
 template <ArithmeticNoBool T>
-inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
-                                        const Vector<T>& vector) {
+Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
+                                 const Vector<T>& vector) {
   if (matrix.cols() != vector.size()) {
     throw BadDimensionException(
         "matrix.cols has to be the same as the vector dimension.");
@@ -204,8 +209,8 @@ inline Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
 }
 
 template <ArithmeticNoBool T>
-inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
-                                                   const Matrix<T>& matrix) {
+Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
+                                            const Matrix<T>& matrix) {
   if (matrix.rows() != vector.size()) {
     throw BadDimensionException(
         "matrix.rows has to be the same as the vector dimension.");
@@ -223,8 +228,8 @@ inline Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
 }
 
 template <ArithmeticNoBool T>
-inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
-                                   const Matrix<T>& matrix2) {
+Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
+                            const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.rows()) {
     throw BadDimensionException(
         "matrix1.cols has to be the same as matrix2.rows");
@@ -244,7 +249,7 @@ inline Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
 }
 
 template <ArithmeticNoBool T>
-inline bool equal_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
+bool equal_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
   }

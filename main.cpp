@@ -1,9 +1,36 @@
 #include <iostream>
 #include <string>
 #include <type_traits>
-//#include "Vector.hpp"
-#include "Matrix.hpp"
 
+#include "Matrix.hpp"
+#include "Vector.hpp"
+//#include "Vec.hpp"
+
+/*int main() {
+  Vector v0 = {-23, 12, 144, 90};
+  Vector v1{-67, 34, 90, 89};
+  Vector v2{-34, 111, 45, 90};
+
+  // Following assignment will call the ctor of Vec which accept type of
+  // `VecExpression<E> const&`. Then expand the loop body to
+  // a.elems[i] + b.elems[i] + c.elems[i]
+  Vector sum_of_vec_type = v0 + v1 + v2;
+
+  for (size_t i = 0; i < sum_of_vec_type.size(); ++i) {
+    std::cout << sum_of_vec_type(i) << '\n';
+  }
+
+  std::cout << '\n';
+  // To avoid creating any extra storage, other than v0, v1, v2
+  // one can do the following (Tested with C++11 on GCC 5.3.0)
+  auto sum = v0 + v1 - v2 + v0;
+  for (size_t i = 0; i < sum.size(); ++i) {
+    std::cout << sum(i) << '\n';
+  }
+  // Observe that in this case typeid(sum) will be VecSum<VecSum<Vec, Vec>, Vec>
+  // and this chaining of operations can go on.
+}
+*/
 int main() {
   libMatrix::Matrix<float> m1(3, 4);
   libMatrix::Matrix<float> m2(4, 3);
@@ -49,7 +76,7 @@ int main() {
   vec1(1) = 2;
   vec2(0) = 1;
   vec2(1) = 4;
-  // bool equ = vec1 != vec2;
+  bool equ = vec1 == vec2;
   bool equ2 = mc1 == mc2;
   crossVec(0) = 1;
   crossVec(1) = 2;
@@ -76,5 +103,7 @@ int main() {
   std::cout << d << '\n';
   std::cout << m6 << '\n';
   std::cout << res4 << '\n';
+  std::cout << equ << '\n';
+  std::cout << equ2 << '\n';
   return 0;
 }

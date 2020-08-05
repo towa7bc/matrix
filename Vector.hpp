@@ -36,100 +36,111 @@ class BadDimensionException final : public std::exception {
 using uint = unsigned int;
 
 template <typename T>
+class IVectorEqualityComparable {
+ private:
+  /// vector equality
+  friend bool operator==(T vector1, T vector2) {
+    return equal_vectors(std::move(vector1), std::move(vector2));
+  }
+
+  /// vector inequality
+  friend bool operator!=(T vector1, T vector2) {
+    return !(std::move(vector1) == std::move(vector2));
+  }
+};
+
+template <typename T, typename S>
+class IVectorArithmeticOperations {
+ private:
+  /// vector addition
+  friend T operator+(T vector1, T vector2) {
+    return add_vectors(std::move(vector1), std::move(vector2));
+  }
+
+  /// vector subtraction
+  friend T operator-(T vector1, T vector2) {
+    return subtract_vectors(std::move(vector1), std::move(vector2));
+  }
+
+  /// scalar multiplication
+  friend S operator*(T vector1, T vector2) {
+    return scalar_product(std::move(vector1), std::move(vector2));
+  }
+
+  /// multiply a scalar value with a vector
+  friend T operator*(S scalarValue, T vector) {
+    return multiply_scalar_vector(scalarValue, std::move(vector));
+  }
+
+  /// multiply a vector with a scalar value
+  friend T operator*(T vector, S scalarValue) {
+    return multiply_vector_scalar(std::move(vector), scalarValue);
+  }
+
+  /// calculate the cross product of two 3d vectors
+  friend T cross(T v1, T v2) {
+    return calc_cross(std::move(v1), std::move(v2));
+  }
+};
+
+template <typename T>
+class IVectorGenericOperations {
+ private:
+  /// swap vectors
+  friend void swap(T& v1, T& v2) noexcept { v1.swap(v2); }
+
+  /// print a complete vector
+  friend std::ostream& operator<<(std::ostream& out, T v) {
+    return print_vector(out, std::move(v));
+  }
+};
+
+template <typename T>
 concept ArithmeticNoBool = std::is_arithmetic_v<T> && !std::is_same_v<bool, T>;
 
 template <ArithmeticNoBool T>
-class Vector {
+class Vector : private IVectorEqualityComparable<Vector<T>>,
+               private IVectorArithmeticOperations<Vector<T>, T>,
+               private IVectorGenericOperations<Vector<T>> {
  private:
   uint rows_{0};
   std::vector<T> data_;
 
  public:
-  explicit Vector(uint /*rows*/);
+  explicit Vector(uint rows) : rows_(rows) {
+    if (rows == 0) {
+      throw BadIndexException("Vector constructor has 0 size");
+    }
+    data_.resize(rows);
+  }
 
-  T& operator()(uint /*row*/);
-  T operator()(uint /*row*/) const;
+  T& operator()(uint row) {
+    if (row >= rows_) {
+      throw BadIndexException("Vector constructor has 0 size");
+    }
+    return data_[row];
+  }
+
+  T operator()(uint row) const {
+    if (row >= rows_) {
+      throw BadIndexException("Vector constructor has 0 size");
+    }
+    return data_[row];
+  }
 
   [[nodiscard]] int size() const { return rows_; }
 
-  /// vector equality
-  inline friend bool operator==(Vector<T> vector1, Vector<T> vector2) {
-    return equal_vectors(std::move(vector1), std::move(vector2));
-  }
-
-  /// vector inequality
-  inline friend bool operator!=(Vector<T> vector1, Vector<T> vector2) {
-    return !(std::move(vector1) == std::move(vector2));
-  }
-
-  /// vector addition
-  inline friend Vector<T> operator+(Vector<T> vector1, Vector<T> vector2) {
-    return add_vectors(std::move(vector1), std::move(vector2));
-  }
-
-  /// vector subtraction
-  inline friend Vector<T> operator-(Vector<T> vector1, Vector<T> vector2) {
-    return subtract_vectors(std::move(vector1), std::move(vector2));
-  }
-
-  /// scalar multiplication
-  inline friend T operator*(Vector<T> vector1, Vector<T> vector2) {
-    return scalar_product(std::move(vector1), std::move(vector2));
-  }
-
-  /// multiply a scalar value with a vector
-  inline friend Vector<T> operator*(T scalarValue, Vector<T> vector) {
-    return multiply_scalar_vector(scalarValue, std::move(vector));
-  }
-
-  /// multiply a vector with a scalar value
-  inline friend Vector<T> operator*(Vector<T> vector, T scalarValue) {
-    return multiply_vector_scalar(std::move(vector), scalarValue);
-  }
-
-  /// calculate the cross product of two 3d vectors
-  inline friend Vector<T> cross(Vector<T> v1, Vector<T> v2) {
-    return calc_cross(std::move(v1), std::move(v2));
-  }
-
-  /// print a complete vector
-  inline friend std::ostream& operator<<(std::ostream& out, Vector<T> v) {
-    return print_vector(out, std::move(v));
+  void swap(Vector& rhs) noexcept {
+    using std::swap;
+    swap(data_, rhs.data_);
+    swap(rows_, rhs.rows_);
   }
 };
-
-/// #region class implementation
-
-template <ArithmeticNoBool T>
-Vector<T>::Vector(uint rows) : rows_(rows) {
-  if (rows == 0) {
-    throw BadIndexException("Vector constructor has 0 size");
-  }
-  data_.resize(rows);
-}
-
-template <ArithmeticNoBool T>
-inline T& Vector<T>::operator()(uint row) {
-  if (row >= rows_) {
-    throw BadIndexException("Vector constructor has 0 size");
-  }
-  return data_[row];
-}
-
-template <ArithmeticNoBool T>
-inline T Vector<T>::operator()(uint row) const {
-  if (row >= rows_) {
-    throw BadIndexException("Vector constructor has 0 size");
-  }
-  return data_[row];
-}
-
-/// #endregion class implementation
 
 /// #region helper functions
 
 template <ArithmeticNoBool T>
-inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
+std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
   for (auto index{0}; index < v.size(); ++index) {
     out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
   }
@@ -137,7 +148,7 @@ inline std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
 }
 
 template <ArithmeticNoBool T>
-inline Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
+Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
   if (v1.size() != 3 || v2.size() != 3) {
     throw BadDimensionException(
         "Vector cross product is only defined in 3 dimensions.");
@@ -153,8 +164,7 @@ inline Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
 }
 
 template <ArithmeticNoBool T>
-inline Vector<T> multiply_scalar_vector(T scalarValue,
-                                        const Vector<T>& vector) {
+Vector<T> multiply_scalar_vector(T scalarValue, const Vector<T>& vector) {
   Vector<T> result(vector.size());
   for (auto i = 0; i < vector.size(); ++i) {
     result(i) = scalarValue * vector(i);
@@ -163,15 +173,14 @@ inline Vector<T> multiply_scalar_vector(T scalarValue,
 }
 
 template <ArithmeticNoBool T>
-inline Vector<T> multiply_vector_scalar(const Vector<T>& vector,
-                                        T scalarValue) {
+Vector<T> multiply_vector_scalar(const Vector<T>& vector, T scalarValue) {
   Vector<T> result(vector.size());
   result = scalarValue * vector;
   return result;
 }
 
 template <ArithmeticNoBool T>
-inline T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
+T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
@@ -186,8 +195,7 @@ inline T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
 }
 
 template <ArithmeticNoBool T>
-inline Vector<T> subtract_vectors(const Vector<T>& vector1,
-                                  const Vector<T>& vector2) {
+Vector<T> subtract_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
@@ -202,8 +210,7 @@ inline Vector<T> subtract_vectors(const Vector<T>& vector1,
 }
 
 template <ArithmeticNoBool T>
-inline Vector<T> add_vectors(const Vector<T>& vector1,
-                             const Vector<T>& vector2) {
+Vector<T> add_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
@@ -218,7 +225,7 @@ inline Vector<T> add_vectors(const Vector<T>& vector1,
 }
 
 template <ArithmeticNoBool T>
-inline bool equal_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
+bool equal_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }

@@ -32,8 +32,10 @@
 }
 */
 int main() {
-  libMatrix::Matrix<float> m1(3, 4);
-  libMatrix::Matrix<float> m2(4, 3);
+  libMatrix::Matrix<float> m1({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 3, 4);
+  libMatrix::Matrix<float> m2({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 4, 3);
+  // libMatrix::Matrix<float> m1(3, 4);
+  // libMatrix::Matrix<float> m2(4, 3);
   libMatrix::Matrix<float> res1(2, 2);
   libMatrix::Matrix<float> res2(3, 3);
   // libMatrix::Matrix<bool> res3(2, 2);
@@ -41,7 +43,7 @@ int main() {
   libMatrix::Matrix<float> mc2(2, 2);
   libMatrix::Matrix<float> res4(2, 2);
 
-  libMatrix::Vector<float> vec1(2);
+  libMatrix::Vector<float> vec1{1, 2};
   libMatrix::Vector<float> vec2(2);
   libMatrix::Vector<float> resVec(2);
   libMatrix::Vector<float> crossVec(3);
@@ -57,27 +59,27 @@ int main() {
   mc2(1, 0) = 1;
   mc2(1, 1) = 1;
 
-  m1(0, 0) = 1;
-  m1(0, 1) = 2;
-  m1(1, 0) = 3;
-  m1(1, 1) = 4;
-  m1(1, 2) = 5;
-  m1(2, 1) = 6;
-  m1(2, 2) = 7;
-  m2(0, 0) = 1;
-  m2(0, 1) = 2;
-  m2(1, 0) = 3;
-  m2(1, 1) = 4;
-  m2(1, 2) = 5;
-  m2(2, 1) = 6;
-  m2(2, 2) = 7;
-
-  vec1(0) = 1;
-  vec1(1) = 2;
+  /* m1(0, 0) = 1;
+   m1(0, 1) = 2;
+   m1(1, 0) = 3;
+   m1(1, 1) = 4;
+   m1(1, 2) = 5;
+   m1(2, 1) = 6;
+   m1(2, 2) = 7;
+   m2(0, 0) = 1;
+   m2(0, 1) = 2;
+   m2(1, 0) = 3;
+   m2(1, 1) = 4;
+   m2(1, 2) = 5;
+   m2(2, 1) = 6;
+   m2(2, 2) = 7;
+ */
+  // vec1(0) = 1;
+  // vec1(1) = 2;
   vec2(0) = 1;
   vec2(1) = 4;
   bool equ = vec1 != vec2;
-  bool equ2 = mc1 == mc2;
+  bool equ2 = mc1 != mc2;
   crossVec(0) = 1;
   crossVec(1) = 2;
   crossVec(2) = 3;
@@ -89,7 +91,7 @@ int main() {
   // res2(1, 0) = 0;
   // res2(1, 1) = 0;
   // resVec = vec1 * m1;
-  // res3 = 5 * m1 + 2 * m2;
+  auto res3 = 6 * m1 * m2;
   res2 = m1 * (-5) * m2 * scalar;
   res4 = mc1 + mc2;
   libMatrix::Matrix<float> m6 = libMatrix::Matrix<float>(res2);
@@ -97,6 +99,7 @@ int main() {
   res = vec1 * vec2;
   auto d = cross(std::move(crossVec), std::move(crossVec2));
   // std::cout << std::move(res3) << '\n';
+  std::cout << res3 << '\n';
   std::cout << res2 << '\n';
   std::cout << resVec << '\n';
   std::cout << res << '\n';

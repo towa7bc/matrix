@@ -7,4 +7,4 @@ add_executable(matrix
         Vector.hpp
         Matrix.hpp
         main.cpp
-        Vec.hpp)
+        Vec.hpp MatrixHelperFunctions.hpp VectorHelperFunctions.hpp Interfaces.hpp)

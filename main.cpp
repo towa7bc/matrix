@@ -32,12 +32,12 @@
 }
 */
 int main() {
-  libMatrix::Matrix<float> m1({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 3, 4);
+  libMatrix::Matrix<float> m1{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 3, 4};
   libMatrix::Matrix<float> m2({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 4, 3);
   // libMatrix::Matrix<float> m1(3, 4);
   // libMatrix::Matrix<float> m2(4, 3);
   libMatrix::Matrix<float> res1(2, 2);
-  libMatrix::Matrix<float> res2(3, 3);
+  libMatrix::Matrix<float> res2{3, 3};
   // libMatrix::Matrix<bool> res3(2, 2);
   libMatrix::Matrix<float> mc1(2, 2);
   libMatrix::Matrix<float> mc2(2, 2);

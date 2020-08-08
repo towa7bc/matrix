@@ -19,7 +19,7 @@ class Vector : private IEqualityComparable<Vector<T>, T>,
                private IArithmeticOperations<Vector<T>, T>,
                private IGenericOperations<Vector<T>, T> {
  private:
-  size_t rows_{0};
+  size_t rows_{0UL};
   std::vector<T> data_;
 
  public:

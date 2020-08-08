@@ -11,9 +11,9 @@ namespace libMatrix::inline v1 {
 
 template <ArithmeticNoBool T>
 std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
-  for (size_t row{0}; row < m.rows(); ++row) {
+  for (size_t row{0UL}; row < m.rows(); ++row) {
     out << '|' << ' ';
-    for (size_t col{0}; col < m.cols(); ++col) {
+    for (size_t col{0UL}; col < m.cols(); ++col) {
       out << m(row, col) << ' ';
     }
     out << '|' << '\n';
@@ -29,8 +29,8 @@ Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     Matrix<T> result(matrix1.rows(), matrix1.cols());
-    for (size_t i{0}; i < matrix1.rows(); ++i) {
-      for (size_t j{0}; j < matrix1.cols(); ++j) {
+    for (size_t i{0UL}; i < matrix1.rows(); ++i) {
+      for (size_t j{0UL}; j < matrix1.cols(); ++j) {
         result(i, j) = matrix1(i, j) - matrix2(i, j);
       }
     }
@@ -46,8 +46,8 @@ Matrix<T> add_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     Matrix<T> result(matrix1.rows(), matrix1.cols());
-    for (size_t i{0}; i < matrix1.rows(); ++i) {
-      for (size_t j{0}; j < matrix1.cols(); ++j) {
+    for (size_t i{0UL}; i < matrix1.rows(); ++i) {
+      for (size_t j{0UL}; j < matrix1.cols(); ++j) {
         result(i, j) = matrix1(i, j) + matrix2(i, j);
       }
     }
@@ -59,8 +59,8 @@ Matrix<T> add_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
 template <ArithmeticNoBool T>
 Matrix<T> multiply_scalar_matrix(T scalarValue, const Matrix<T>& matrix) {
   Matrix<T> result(matrix.rows(), matrix.cols());
-  for (size_t i{0}; i < matrix.rows(); ++i) {
-    for (size_t j{0}; j < matrix.cols(); ++j) {
+  for (size_t i{0UL}; i < matrix.rows(); ++i) {
+    for (size_t j{0UL}; j < matrix.cols(); ++j) {
       result(i, j) = scalarValue * matrix(i, j);
     }
   }
@@ -83,8 +83,8 @@ Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     Vector<T> result(vector.size());
-    for (size_t i{0}; i < matrix.rows(); ++i) {
-      for (size_t j{0}; j < matrix.cols(); ++j) {
+    for (size_t i{0UL}; i < matrix.rows(); ++i) {
+      for (size_t j{0UL}; j < matrix.cols(); ++j) {
         result(i) += matrix(i, j) * vector(j);
       }
     }
@@ -102,8 +102,8 @@ Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     Vector<T> result(vector.size());
-    for (size_t i{0}; i < matrix.rows(); ++i) {
-      for (size_t j{0}; j < matrix.cols(); ++j) {
+    for (size_t i{0UL}; i < matrix.rows(); ++i) {
+      for (size_t j{0UL}; j < matrix.cols(); ++j) {
         result(i) += vector(i) * matrix(i, j);
       }
     }
@@ -121,9 +121,9 @@ Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     Matrix<T> result(matrix1.rows(), matrix2.cols());
-    for (size_t i{0}; i < matrix1.rows(); ++i) {
-      for (size_t j{0}; j < matrix2.cols(); ++j) {
-        for (size_t k{0}; k < matrix1.cols(); ++k) {
+    for (size_t i{0UL}; i < matrix1.rows(); ++i) {
+      for (size_t j{0UL}; j < matrix2.cols(); ++j) {
+        for (size_t k{0UL}; k < matrix1.cols(); ++k) {
           result(i, j) += matrix1(i, k) * matrix2(k, j);
         }
       }
@@ -140,8 +140,8 @@ bool equal_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   }
   bool returnValue =
       matrix1.cols() == matrix2.cols() || matrix1.rows() == matrix2.rows();
-  for (size_t i{0}; i < matrix1.rows(); ++i) {
-    for (size_t j{0}; j < matrix1.cols(); ++j) {
+  for (size_t i{0UL}; i < matrix1.rows(); ++i) {
+    for (size_t j{0UL}; j < matrix1.cols(); ++j) {
       returnValue &= matrix1(i, j) == matrix2(i, j);
     }
   }

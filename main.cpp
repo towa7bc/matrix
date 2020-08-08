@@ -91,7 +91,7 @@ int main() {
   // res2(1, 0) = 0;
   // res2(1, 1) = 0;
   // resVec = vec1 * m1;
-  auto res3 = 6 * m1 * m2;
+  auto res3 = mc1 * mc2 * (vec1 + vec2);
   res2 = m1 * (-5) * m2 * scalar;
   res4 = mc1 + mc2;
   libMatrix::Matrix<float> m6 = libMatrix::Matrix<float>(res2);

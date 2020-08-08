@@ -11,7 +11,7 @@ namespace libMatrix::inline v1 {
 
 template <ArithmeticNoBool T>
 std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
-  for (size_t index{0}; index < v.size(); ++index) {
+  for (size_t index{0UL}; index < v.size(); ++index) {
     out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
   }
   return out;
@@ -36,7 +36,7 @@ Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
 template <ArithmeticNoBool T>
 Vector<T> multiply_scalar_vector(T scalarValue, const Vector<T>& vector) {
   Vector<T> result(vector.size());
-  for (size_t i{0}; i < vector.size(); ++i) {
+  for (size_t i{0UL}; i < vector.size(); ++i) {
     result(i) = scalarValue * vector(i);
   }
   return result;
@@ -56,7 +56,7 @@ T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     T result{0};
-    for (size_t i{0}; i < vector1.size(); ++i) {
+    for (size_t i{0UL}; i < vector1.size(); ++i) {
       result += vector1(i) * vector2(i);
     }
     return result;
@@ -71,7 +71,7 @@ Vector<T> subtract_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     Vector<T> result(vector1.size());
-    for (size_t i{0}; i < vector1.size(); ++i) {
+    for (size_t i{0UL}; i < vector1.size(); ++i) {
       result(i) = vector1(i) - vector2(i);
     }
     return result;
@@ -86,7 +86,7 @@ Vector<T> add_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
     Vector<T> result(vector1.size());
-    for (size_t i{0}; i < vector1.size(); ++i) {
+    for (size_t i{0UL}; i < vector1.size(); ++i) {
       result(i) = vector1(i) + vector2(i);
     }
     return result;
@@ -100,7 +100,7 @@ bool equal_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
   bool returnValue = vector1.size() == vector2.size();
-  for (size_t index{0}; index < vector1.size(); ++index) {
+  for (size_t index{0UL}; index < vector1.size(); ++index) {
     returnValue &= vector1(index) == vector2(index);
   }
   return returnValue;

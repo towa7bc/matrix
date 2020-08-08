@@ -19,7 +19,7 @@ class Matrix : private IEqualityComparable<Matrix<T>, T>,
                private IMixedArithmeticOperations<Matrix<T>, Vector<T>>,
                private IGenericOperations<Matrix<T>, T> {
  private:
-  size_t rows_{0}, cols_{0};
+  size_t rows_{0UL}, cols_{0UL};
   std::vector<T> data_;
 
  public:

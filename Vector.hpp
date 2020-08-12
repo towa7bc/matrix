@@ -14,7 +14,7 @@
 
 namespace libMatrix::inline v1 {
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 class Vector : private IEqualityComparable<Vector<T>, T>,
                private IArithmeticOperations<Vector<T>, T>,
                private IGenericOperations<Vector<T>, T> {
@@ -37,14 +37,14 @@ class Vector : private IEqualityComparable<Vector<T>, T>,
     }
   }
 
-  T& operator()(size_t row) {
+  Arithmetic auto& operator()(size_t row) {
     if (row >= rows_) {
       throw BadIndexException("Vector index invalid");
     }
     return data_[row];
   }
 
-  T operator()(size_t row) const {
+  Arithmetic auto operator()(size_t row) const {
     if (row >= rows_) {
       throw BadIndexException("Vector index invalid");
     }

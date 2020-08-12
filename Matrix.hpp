@@ -13,7 +13,7 @@
 
 namespace libMatrix::inline v1 {
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 class Matrix : private IEqualityComparable<Matrix<T>, T>,
                private IArithmeticOperations<Matrix<T>, T>,
                private IMixedArithmeticOperations<Matrix<T>, Vector<T>>,
@@ -37,14 +37,14 @@ class Matrix : private IEqualityComparable<Matrix<T>, T>,
     }
   }
 
-  T& operator()(size_t row, size_t col) {
+  Arithmetic auto& operator()(size_t row, size_t col) {
     if (row >= rows_ || col >= cols_) {
       throw BadIndexException("Matrix index invalid");
     }
     return data_[cols_ * row + col];
   }
 
-  T operator()(size_t row, size_t col) const {
+  Arithmetic auto operator()(size_t row, size_t col) const {
     if (row >= rows_ || col >= cols_) {
       throw BadIndexException("Matrix index invalid");
     }

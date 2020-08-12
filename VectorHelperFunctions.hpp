@@ -9,7 +9,7 @@
 
 namespace libMatrix::inline v1 {
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
   for (size_t index{0UL}; index < v.size(); ++index) {
     out << '|' << ' ' << v(index) << ' ' << '|' << '\n';
@@ -17,7 +17,7 @@ std::ostream& print_vector(std::ostream& out, const Vector<T>& v) {
   return out;
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
   if (v1.size() != 3 || v2.size() != 3) {
     throw BadDimensionException(
@@ -33,8 +33,9 @@ Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
-Vector<T> multiply_scalar_vector(T scalarValue, const Vector<T>& vector) {
+template <Arithmetic T>
+Vector<T> multiply_scalar_vector(Arithmetic auto scalarValue,
+                                 const Vector<T>& vector) {
   Vector<T> result(vector.size());
   for (size_t i{0UL}; i < vector.size(); ++i) {
     result(i) = scalarValue * vector(i);
@@ -42,20 +43,22 @@ Vector<T> multiply_scalar_vector(T scalarValue, const Vector<T>& vector) {
   return result;
 }
 
-template <ArithmeticNoBool T>
-Vector<T> multiply_vector_scalar(const Vector<T>& vector, T scalarValue) {
+template <Arithmetic T>
+Vector<T> multiply_vector_scalar(const Vector<T>& vector,
+                                 Arithmetic auto scalarValue) {
   Vector<T> result(vector.size());
   result = scalarValue * vector;
   return result;
 }
 
-template <ArithmeticNoBool T>
-T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
+template <Arithmetic T>
+Arithmetic auto scalar_product(const Vector<T>& vector1,
+                               const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
-    T result{0};
+    Arithmetic auto result{0};
     for (size_t i{0UL}; i < vector1.size(); ++i) {
       result += vector1(i) * vector2(i);
     }
@@ -64,7 +67,7 @@ T scalar_product(const Vector<T>& vector1, const Vector<T>& vector2) {
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Vector<T> subtract_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
@@ -79,7 +82,7 @@ Vector<T> subtract_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Vector<T> add_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
@@ -94,7 +97,7 @@ Vector<T> add_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 bool equal_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");

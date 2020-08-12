@@ -9,7 +9,7 @@
 
 namespace libMatrix::inline v1 {
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
   for (size_t row{0UL}; row < m.rows(); ++row) {
     out << '|' << ' ';
@@ -21,7 +21,7 @@ std::ostream& print_matrix(std::ostream& out, const Matrix<T>& m) {
   return out;
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
                             const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
@@ -39,7 +39,7 @@ Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Matrix<T> add_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
@@ -56,8 +56,9 @@ Matrix<T> add_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
-Matrix<T> multiply_scalar_matrix(T scalarValue, const Matrix<T>& matrix) {
+template <Arithmetic T>
+Matrix<T> multiply_scalar_matrix(Arithmetic auto scalarValue,
+                                 const Matrix<T>& matrix) {
   Matrix<T> result(matrix.rows(), matrix.cols());
   for (size_t i{0UL}; i < matrix.rows(); ++i) {
     for (size_t j{0UL}; j < matrix.cols(); ++j) {
@@ -67,14 +68,15 @@ Matrix<T> multiply_scalar_matrix(T scalarValue, const Matrix<T>& matrix) {
   return result;
 }
 
-template <ArithmeticNoBool T>
-Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix, T scalarValue) {
+template <Arithmetic T>
+Matrix<T> multiply_matrix_scalar(const Matrix<T>& matrix,
+                                 Arithmetic auto scalarValue) {
   Matrix<T> result(matrix.rows(), matrix.cols());
   result = scalarValue * matrix;
   return result;
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
                                  const Vector<T>& vector) {
   if (matrix.cols() != vector.size()) {
@@ -93,7 +95,7 @@ Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
                                             const Matrix<T>& matrix) {
   if (matrix.rows() != vector.size()) {
@@ -112,7 +114,7 @@ Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
                             const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.rows()) {
@@ -133,7 +135,7 @@ Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
   return resultFuture.get();
 }
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 bool equal_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");

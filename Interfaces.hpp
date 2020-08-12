@@ -9,15 +9,15 @@
 namespace libMatrix::inline v1 {
 
 template <typename T>
-concept ArithmeticNoBool = std::is_arithmetic_v<T> && !std::is_same_v<bool, T>;
+concept Arithmetic = std::is_arithmetic_v<T> && !std::is_same_v<bool, T>;
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 class Vector;
 
-template <ArithmeticNoBool T>
+template <Arithmetic T>
 class Matrix;
 
-template <typename VecOrMat, ArithmeticNoBool T>
+template <typename VecOrMat, Arithmetic T>
 class IEqualityComparable {
  private:
   /// vector/matrix equality
@@ -35,7 +35,7 @@ class IEqualityComparable {
   }
 };
 
-template <typename VecOrMat, ArithmeticNoBool Scalar>
+template <typename VecOrMat, Arithmetic Scalar>
 class IArithmeticOperations {
  private:
   /// vector/matrix addition
@@ -106,7 +106,7 @@ class IMixedArithmeticOperations {
   }
 };
 
-template <typename VecOrMat, ArithmeticNoBool T>
+template <typename VecOrMat, Arithmetic T>
 class IGenericOperations {
  private:
   /// swap vectors/matrices

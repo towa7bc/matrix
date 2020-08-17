@@ -6,8 +6,54 @@
 #define MATRIX_VEC_HPP
 
 #include <cassert>
+#include <cstdio>
+#include <memory>
 #include <utility>
 #include <vector>
+
+template <typename Derived>
+class Base {
+ public:
+  bool canPerformAction() {
+    return static_cast<Derived&>(*this).canPerformAction();
+  }
+  [[nodiscard]] bool canPerformAction() const {
+    return static_cast<const Derived&>(*this).canPerformAction();
+  }
+};
+
+class Derived1 : public Base<Derived1> {
+  friend class Base<Derived1>;
+
+ private:
+  bool canPerformAction() { return true; }
+  [[nodiscard]] bool canPerformAction() const { return true; }
+};
+
+class Derived2 : public Base<Derived2> {
+  friend class Base<Derived2>;
+
+ private:
+  bool canPerformAction() { return false; }
+  [[nodiscard]] bool canPerformAction() const { return false; }
+};
+
+template <typename Derived>
+void print(const Base<Derived>& base) {
+  printf(" %s perform the action.\n",
+         base.canPerformAction() ? "can" : "cannot");
+}
+
+class BaseOld {
+ public:
+  virtual bool CanPerformAction() = 0;
+  virtual ~BaseOld() = default;
+};
+
+class DerivedOld : BaseOld {
+ public:
+  bool CanPerformAction() override { return true; }
+};
 
 // template <typename T>
 // concept ArithmeticNoBool = std::is_arithmetic_v<T> && !std::is_same_v<bool,
@@ -16,12 +62,12 @@
 template <typename E>
 class VecExpression {
  public:
-  double operator()(size_t i) const {
+  double operator()(std::size_t i) const {
     // Delegation to the actual expression type. This avoids dynamic
     // polymorphism (a.k.a. virtual functions in C++)
     return static_cast<const E&>(*this)(i);
   }
-  [[nodiscard]] size_t size() const {
+  [[nodiscard]] std::size_t size() const {
     return static_cast<const E&>(*this).size();
   }
 };
@@ -31,11 +77,11 @@ class Vector : public VecExpression<Vector> {
   std::vector<double> elems_;
 
  public:
-  double operator()(size_t i) const { return elems_[i]; }
+  double operator()(std::size_t i) const { return elems_[i]; }
   double& operator()(size_t i) { return elems_[i]; }
-  [[nodiscard]] size_t size() const { return elems_.size(); }
+  [[nodiscard]] std::size_t size() const { return elems_.size(); }
 
-  explicit Vector(size_t n) : elems_(n) {}
+  explicit Vector(std::size_t n) : elems_(n) {}
 
   // construct vector using initializer list
   Vector(std::initializer_list<double> init) : elems_(init) {}
@@ -60,8 +106,8 @@ class VecSum : public VecExpression<VecSum<E1, E2>> {
     assert(u.size() == v.size());
   }
 
-  double operator()(size_t i) const { return u_(i) + v_(i); }
-  [[nodiscard]] size_t size() const { return v_.size(); }
+  double operator()(std::size_t i) const { return u_(i) + v_(i); }
+  [[nodiscard]] std::size_t size() const { return v_.size(); }
 };
 
 template <typename E1, typename E2>
@@ -82,8 +128,8 @@ class VecDiff : public VecExpression<VecDiff<E1, E2>> {
     assert(u.size() == v.size());
   }
 
-  double operator()(size_t i) const { return u_(i) - v_(i); }
-  [[nodiscard]] size_t size() const { return v_.size(); }
+  double operator()(std::size_t i) const { return u_(i) - v_(i); }
+  [[nodiscard]] std::size_t size() const { return v_.size(); }
 };
 
 template <typename E1, typename E2>

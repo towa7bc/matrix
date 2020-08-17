@@ -3,8 +3,8 @@
 #include <type_traits>
 
 #include "Matrix.hpp"
+#include "Vec.hpp"
 #include "Vector.hpp"
-//#include "Vec.hpp"
 
 /*int main() {
   Vector v0 = {-23, 12, 144, 90};
@@ -108,5 +108,16 @@ int main() {
   std::cout << res4 << '\n';
   std::cout << equ << '\n';
   std::cout << equ2 << '\n';
+
+  auto b1 = std::make_unique<Base<Derived1>>(Derived1{});
+  auto b2 = std::make_unique<Base<Derived2>>(Derived2{});
+
+  printf("b1 %s perform the action.\nb2 %s perform the action\n",
+         b1->canPerformAction() ? "can" : "cannot",
+         b2->canPerformAction() ? "can" : "cannot");
+  Derived1 d1;
+  Derived2 d2;
+  print(d2);
+  print(d1);
   return 0;
 }

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <type_traits>
+#include <variant>
+#include <vector>
 
 #include "Matrix.hpp"
 #include "Vec.hpp"
@@ -119,5 +121,40 @@ int main() {
   Derived2 d2;
   print(d2);
   print(d1);
+
+  /// Use virtual functions
+  std::vector<BaseOld*> b;  /// pointer necessary for heterogenous container
+  DerivedOld d44;
+  b.push_back(&d44);
+
+  /// Use CRTP
+  std::vector<std::variant<Base<Derived1>, Base<Derived2>>> ddd;
+  ddd.emplace_back(d1);
+  ddd.emplace_back(d2);
+
+  /// Use concepts
+
+  Concrete1 con1;
+  auto can = canPerformActionGeneric(con1);
+  printf("%s\n", can ? "True" : "False");
+  Concrete2 con2;
+  /// Use variant for heterogenous container
+  std::vector<std::variant<Concrete1, Concrete2>> vv;
+  vv.emplace_back(con1);
+  vv.emplace_back(con2);
+
+  auto can2 = canPerformActionGeneric(vv);
+  for (auto item : can2) {
+    printf("%s\n", item ? "True" : "False");
+  }
+
+  /// Sean Parent 2017 with concepts
+  std::vector<Greeter> gvec{Greeter{English{}}, Greeter{French{}}};
+  gvec.emplace_back(English{});
+  gvec.emplace_back(French{});
+  for (auto&& item : gvec) {
+    item.greet("eadad");
+  }
+
   return 0;
 }

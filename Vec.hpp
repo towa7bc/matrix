@@ -7,58 +7,14 @@
 
 #include <cassert>
 #include <cstdio>
+#include <iostream>
 #include <memory>
+#include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
-template <typename Derived>
-class Base {
- public:
-  bool canPerformAction() {
-    return static_cast<Derived&>(*this).canPerformAction();
-  }
-  [[nodiscard]] bool canPerformAction() const {
-    return static_cast<const Derived&>(*this).canPerformAction();
-  }
-};
-
-class Derived1 : public Base<Derived1> {
-  friend class Base<Derived1>;
-
- private:
-  bool canPerformAction() { return true; }
-  [[nodiscard]] bool canPerformAction() const { return true; }
-};
-
-class Derived2 : public Base<Derived2> {
-  friend class Base<Derived2>;
-
- private:
-  bool canPerformAction() { return false; }
-  [[nodiscard]] bool canPerformAction() const { return false; }
-};
-
-template <typename Derived>
-void print(const Base<Derived>& base) {
-  printf(" %s perform the action.\n",
-         base.canPerformAction() ? "can" : "cannot");
-}
-
-class BaseOld {
- public:
-  virtual bool CanPerformAction() = 0;
-  virtual ~BaseOld() = default;
-};
-
-class DerivedOld : BaseOld {
- public:
-  bool CanPerformAction() override { return true; }
-};
-
-// template <typename T>
-// concept ArithmeticNoBool = std::is_arithmetic_v<T> && !std::is_same_v<bool,
-// T>;
-
+///// Expression Templates
 template <typename E>
 class VecExpression {
  public:
@@ -138,5 +94,153 @@ VecDiff<E1, E2> operator-(const VecExpression<E1>& u,
   return VecDiff<E1, E2>(*static_cast<const E1*>(&u),
                          *static_cast<const E2*>(&v));
 }
+
+template <typename Derived>
+class Base {
+ public:
+  bool canPerformAction() {
+    return static_cast<Derived&>(*this).canPerformAction();
+  }
+  [[nodiscard]] bool canPerformAction() const {
+    return static_cast<const Derived&>(*this).canPerformAction();
+  }
+};
+
+class Derived1 : public Base<Derived1> {
+  friend class Base<Derived1>;
+
+ private:
+  bool canPerformAction() { return true; }
+  [[nodiscard]] bool canPerformAction() const { return true; }
+};
+
+class Derived2 : public Base<Derived2> {
+  friend class Base<Derived2>;
+
+ private:
+  bool canPerformAction() { return false; }
+  [[nodiscard]] bool canPerformAction() const { return false; }
+};
+
+template <typename Derived>
+void print(const Base<Derived>& base) {
+  printf(" %s perform the action.\n",
+         base.canPerformAction() ? "can" : "cannot");
+}
+
+class BaseOld {
+ public:
+  virtual bool canPerformAction() = 0;
+  virtual ~BaseOld() = default;
+};
+
+class DerivedOld : public BaseOld {
+ public:
+  bool canPerformAction() override { return true; }
+};
+
+///// static polymorphism with concepts
+template <typename T>
+concept BaseType = requires(T t) {
+  { t.canPerformAction() }
+  ->std::same_as<bool>;
+};
+
+template <typename>
+inline constexpr bool always_false_v = false;
+
+class Concrete1 {
+ public:
+  bool canPerformAction() { return false; }
+  [[nodiscard]] bool canPerformAction() const { return false; }
+};
+
+class Concrete2 {
+ public:
+  bool canPerformAction() { return true; }
+  [[nodiscard]] bool canPerformAction() const { return true; }
+};
+
+class Concrete3 {
+ public:
+  bool canPerform() { return true; }
+  [[nodiscard]] bool canPerform() const { return true; }
+};
+
+template <BaseType T>
+bool canPerformActionGeneric(T const& t) {
+  return t.canPerformAction();
+}
+
+template <BaseType T, BaseType S>
+std::vector<bool> canPerformActionGeneric(
+    std::vector<std::variant<T, S>> const& vec) {
+  std::vector<bool> retVec;
+  for (auto& item : vec) {
+    auto ret = std::visit(
+        [](auto&& arg) {
+          using U = std::decay_t<decltype(arg)>;
+          if constexpr (std::is_same_v<U, Concrete1>) {
+            return arg.canPerformAction();
+          } else if constexpr (std::is_same_v<U, Concrete2>) {
+            return arg.canPerformAction();
+          } else {
+            static_assert(always_false_v<U>, "no good visitor!");
+          }
+        },
+        item);
+    retVec.push_back(ret);
+  }
+  return retVec;
+}
+
+/// Sean Parent 2017
+template <typename T>
+concept Greetable = requires(T t, std::string const& name) {
+  { t.greet(name) }
+  ->std::same_as<void>;
+};
+
+class Greeter {
+ public:
+  template <Greetable T>
+  explicit Greeter(T data)
+      : self_(std::make_shared<Model<T>>(std::move(data))) {}
+
+  void greet(std::string const& name) const { self_->greet(name); }
+
+ private:
+  class Concept_t {
+   public:
+    virtual ~Concept_t() = default;
+    virtual void greet(std::string const&) const = 0;
+  };
+
+  template <Greetable T>
+  class Model : public Concept_t {
+   public:
+    explicit Model(T data) : data_(std::move(data)) {}
+    void greet(std::string const& name) const override { data_.greet(name); }
+
+   private:
+    T data_;
+  };
+
+  std::shared_ptr<const Concept_t> self_;
+};
+
+class English {
+ public:
+  void greet(std::string const& name) const {
+    std::cout << "Good day " << name << '\n';
+  }
+};
+
+class French {
+ public:
+  void greet(std::string const& name) const {
+    std::cout << "Bonjour " << name << '\n';
+  }
+};
 
 #endif  // MATRIX_VEC_HPP

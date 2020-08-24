@@ -196,28 +196,39 @@ std::vector<bool> canPerformActionGeneric(
 
 /// Sean Parent 2017
 template <typename T>
-concept Greetable = requires(T t, std::string const& name) {
-  { t.greet(name) }
+concept Drawable = requires(T const& t, std::ostream& out,
+                            std::size_t position) {
+  { draw(t, out, position) }
   ->std::same_as<void>;
 };
 
-class Greeter {
- public:
-  template <Greetable T>
-  Greeter(T data) : self_(std::make_shared<model<T>>(std::move(data))) {}
+template <typename T>
+void draw(T const& t, std::ostream& out, std::size_t position) {
+  out << std::string(position, ' ') << t << '\n';
+}
 
-  void greet(std::string const& name) const { self_->greet_(name); }
+class object_t {
+ public:
+  template <typename T>
+  object_t(T data) : self_(std::make_shared<model<T>>(std::move(data))) {}
+
+  friend void draw(object_t const& obj, std::ostream& out,
+                   std::size_t position) {
+    obj.self_->draw_(out, position);
+  }
 
  private:
   struct concept_t {
     virtual ~concept_t() = default;
-    virtual void greet_(std::string const&) const = 0;
+    virtual void draw_(std::ostream& out, std::size_t position) const = 0;
   };
 
-  template <Greetable T>
+  template <typename T>
   struct model final : public concept_t {
-    explicit model(T data) : data_(std::move(data)) {}
-    void greet_(std::string const& name) const override { data_.greet(name); }
+    model(T data) : data_(std::move(data)) {}
+    void draw_(std::ostream& out, std::size_t position) const override {
+      draw(data_, out, position);
+    }
 
    private:
     T data_;
@@ -226,18 +237,20 @@ class Greeter {
   std::shared_ptr<const concept_t> self_;
 };
 
-class English {
- public:
-  void greet(std::string const& name) const {
-    std::cout << "Good day " << name << '\n';
-  }
-};
+using document_t = std::vector<object_t>;
 
-class French {
- public:
-  void greet(std::string const& name) const {
-    std::cout << "Bonjour " << name << '\n';
+void draw(document_t const& doc, std::ostream& out, std::size_t position) {
+  out << std::string(position, ' ') << "<document>" << '\n';
+  for (auto&& item : doc) {
+    draw(item, out, position + 2);
   }
-};
+  out << std::string(position, ' ') << "</document>" << '\n';
+}
+
+struct French {};
+
+void draw(French const&, std::ostream& out, std::size_t position) {
+  out << std::string(position, ' ') << "French" << '\n';
+}
 
 #endif  // MATRIX_VEC_HPP

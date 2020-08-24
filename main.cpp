@@ -148,13 +148,15 @@ int main() {
     printf("%s\n", item ? "True" : "False");
   }
 
-  /// Sean Parent 2017 with concepts
-  std::vector<Greeter> gvec{English{}, French{}};
-  gvec.emplace_back(English{});
-  gvec.emplace_back(French{});
-  for (auto&& item : gvec) {
-    item.greet("eadad");
-  }
+  /// Sean Parent 2017
+  document_t document;
+  document.emplace_back(std::string("Hallo"));
+  document.emplace_back(French{});
+  document.emplace_back(9);
+  document.emplace_back(document);
+  document.emplace_back(9999);
+  document.emplace_back(document);
+  draw(document, std::cout, 0);
 
   return 0;
 }

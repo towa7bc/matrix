@@ -204,23 +204,20 @@ concept Greetable = requires(T t, std::string const& name) {
 class Greeter {
  public:
   template <Greetable T>
-  explicit Greeter(T data)
-      : self_(std::make_shared<Model<T>>(std::move(data))) {}
+  Greeter(T data) : self_(std::make_shared<Model<T>>(std::move(data))) {}
 
-  void greet(std::string const& name) const { self_->greet(name); }
+  void greet(std::string const& name) const { self_->greet_(name); }
 
  private:
-  class Concept_t {
-   public:
+  struct Concept_t {
     virtual ~Concept_t() = default;
-    virtual void greet(std::string const&) const = 0;
+    virtual void greet_(std::string const&) const = 0;
   };
 
   template <Greetable T>
-  class Model : public Concept_t {
-   public:
+  struct Model final : public Concept_t {
     explicit Model(T data) : data_(std::move(data)) {}
-    void greet(std::string const& name) const override { data_.greet(name); }
+    void greet_(std::string const& name) const override { data_.greet(name); }
 
    private:
     T data_;

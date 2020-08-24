@@ -149,7 +149,7 @@ int main() {
   }
 
   /// Sean Parent 2017 with concepts
-  std::vector<Greeter> gvec{Greeter{English{}}, Greeter{French{}}};
+  std::vector<Greeter> gvec{English{}, French{}};
   gvec.emplace_back(English{});
   gvec.emplace_back(French{});
   for (auto&& item : gvec) {

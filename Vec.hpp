@@ -6,6 +6,7 @@
 #define MATRIX_VEC_HPP
 
 #include <cassert>
+#include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <memory>
@@ -146,6 +147,10 @@ concept BaseType = requires(T t) {
   ->std::same_as<bool>;
 };
 
+auto CallCanPerformAction = [](BaseType auto& obj) {
+  return obj.canPerformAction();
+};
+
 template <typename>
 inline constexpr bool always_false_v = false;
 
@@ -163,8 +168,8 @@ class Concrete2 {
 
 class Concrete3 {
  public:
-  bool canPerform() { return true; }
-  [[nodiscard]] bool canPerform() const { return true; }
+  bool canPerformAction() { return true; }
+  [[nodiscard]] bool canPerformAction() const { return true; }
 };
 
 template <BaseType T>
@@ -196,8 +201,7 @@ std::vector<bool> canPerformActionGeneric(
 
 /// Sean Parent 2017
 template <typename T>
-concept Drawable = requires(T const& t, std::ostream& out,
-                            std::size_t position) {
+concept Drawable = requires(T t, std::ostream out, std::size_t position) {
   { draw(t, out, position) }
   ->std::same_as<void>;
 };
@@ -225,7 +229,7 @@ class object_t {
 
   template <typename T>
   struct model final : public concept_t {
-    model(T data) : data_(std::move(data)) {}
+    explicit model(T data) : data_(std::move(data)) {}
     void draw_(std::ostream& out, std::size_t position) const override {
       draw(data_, out, position);
     }
@@ -234,7 +238,7 @@ class object_t {
     T data_;
   };
 
-  std::shared_ptr<const concept_t> self_;
+  std::shared_ptr<concept_t const> self_;
 };
 
 using document_t = std::vector<object_t>;
@@ -247,10 +251,84 @@ void draw(document_t const& doc, std::ostream& out, std::size_t position) {
   out << std::string(position, ' ') << "</document>" << '\n';
 }
 
-struct French {};
+struct french {};
 
-void draw(French const&, std::ostream& out, std::size_t position) {
-  out << std::string(position, ' ') << "French" << '\n';
+void draw(french const&, std::ostream& out, std::size_t position) {
+  out << std::string(position, ' ') << "Bonjour!" << '\n';
+}
+
+template <typename... Ts>
+struct overloaded : Ts... {
+  using Ts::operator()...;
+};
+template <typename... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
+template <typename T>
+concept Shape = requires(T t) {
+  { t.area() }
+  ->std::same_as<double>;
+  { t.isGay(int{}) }
+  ->std::same_as<bool>;
+};
+
+int gggggg{10};
+auto CallArea = [](Shape auto& obj) { return obj.area(); };
+auto CallIsGay = [i = gggggg](Shape auto& obj) { return obj.isGay(i); };
+
+class Rectangle {
+ public:
+  Rectangle(double width, double height) : width_(width), height_(height) {}
+  [[nodiscard]] double area() const { return width_ * height_; }
+  bool isGay(int i) {
+    ++i;
+    return true;
+  }
+
+ private:
+  double width_{};
+  double height_{};
+};
+
+class Triangle {
+ public:
+  Triangle(double width, double height) : width_(width), height_(height) {}
+  [[nodiscard]] double area() const { return width_ * height_ / 2; }
+  bool isGay(int i) { return false; }
+
+ private:
+  double width_{};
+  double height_{};
+};
+
+class Circle {
+ public:
+  explicit Circle(double radius) : radius_(radius) {}
+  [[nodiscard]] double area() const { return M_PI * std::pow(radius_, 2); }
+  bool isGay(int i) { return false; }
+
+ private:
+  double radius_{};
+};
+
+template <Shape... S>
+using var = std::variant<S...>;
+template <Shape... S>
+using vecVar = std::vector<var<S...>>;
+
+template <Shape... S>
+double GetArea(var<S...> v) {
+  auto ret = std::visit(overloaded{[](S s) { return s.area(); }...}, v);
+  return ret;
+}
+
+template <Shape... S>
+std::vector<double> GetArea(vecVar<S...>& v) {
+  std::vector<double> retV;
+  for (auto&& elem : v) {
+    retV.emplace_back(GetArea(elem));
+  }
+  return retV;
 }
 
 #endif  // MATRIX_VEC_HPP

@@ -135,28 +135,63 @@ int main() {
   /// Use concepts
 
   Concrete1 con1;
-  auto can = canPerformActionGeneric(con1);
-  printf("%s\n", can ? "True" : "False");
+  // auto can = canPerformActionGeneric(con1);
+  // printf("%s\n", can ? "True" : "False");
   Concrete2 con2;
-  /// Use variant for heterogenous container
-  std::vector<std::variant<Concrete1, Concrete2>> vv;
+  Concrete3 con3;
+  /// Use variant for polymorphic heterogenous container
+  std::vector<std::variant<Concrete1, Concrete2, Concrete3>> vv;
   vv.emplace_back(con1);
   vv.emplace_back(con2);
+  vv.emplace_back(con3);
 
-  auto can2 = canPerformActionGeneric(vv);
-  for (auto item : can2) {
-    printf("%s\n", item ? "True" : "False");
+  std::vector<bool> retVec;
+  for (auto&& elem : vv) {
+    auto ret = std::visit(CallCanPerformAction, elem);
+    retVec.push_back(ret);
   }
+  for (auto&& item : retVec) {
+    printf("retVec: %s\n", item ? "True" : "False");
+  }
+  // auto can2 = canPerformActionGeneric(vv);
+  // for (auto item : can2) {
+  //  printf("%s\n", item ? "True" : "False");
+  //}
 
   /// Sean Parent 2017
-  document_t document;
+  document_t document{0, french{}, std::string("World")};
   document.emplace_back(std::string("Hallo"));
-  document.emplace_back(French{});
+  document.emplace_back(french{});
   document.emplace_back(9);
   document.emplace_back(document);
   document.emplace_back(9999);
   document.emplace_back(document);
   draw(document, std::cout, 0);
+
+  vecVar<Rectangle, Triangle, Circle> vvv{Triangle{3.7, 4.8},
+                                          Rectangle{3.7, 4.8}, Circle{3.7}};
+  auto resVec1 = GetArea(vvv);
+  for (auto&& item : resVec1) {
+    std::cout << "resVec1: " << item << '\n';
+  }
+
+  std::vector<double> retVec2;
+  std::vector<bool> retVec3;
+  for (auto&& elem : vvv) {
+    auto ret = std::visit(CallArea, elem);
+    retVec2.push_back(ret);
+  }
+  for (auto&& item : retVec2) {
+    std::cout << "retVec2: " << item << '\n';
+  }
+
+  for (auto&& elem : vvv) {
+    auto ret = std::visit(CallIsGay, elem);
+    retVec3.push_back(ret);
+  }
+  for (auto&& item : retVec3) {
+    std::cout << "retVec3: " << item << '\n';
+  }
 
   return 0;
 }

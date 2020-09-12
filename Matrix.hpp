@@ -14,10 +14,10 @@
 namespace libMatrix::inline v1 {
 
 template <Arithmetic T>
-class Matrix : private IEqualityComparable<Matrix<T>, T>,
-               private IArithmeticOperations<Matrix<T>, T>,
-               private IMixedArithmeticOperations<Matrix<T>, Vector<T>>,
-               private IGenericOperations<Matrix<T>, T> {
+class Matrix : private IEqualityComparable<Matrix, T>,
+               private IArithmeticOperations<Matrix, T>,
+               private IMixedArithmeticOperations<Matrix, Vector, T>,
+               private IGenericOperations<Matrix, T> {
  private:
   size_t rows_{0UL}, cols_{0UL};
   std::vector<T> data_;

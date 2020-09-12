@@ -17,9 +17,9 @@ namespace libMatrix::inline v1 {
 using size_t = std::size_t;
 
 template <Arithmetic T>
-class Vector : private IEqualityComparable<Vector<T>, T>,
-               private IArithmeticOperations<Vector<T>, T>,
-               private IGenericOperations<Vector<T>, T> {
+class Vector : private IEqualityComparable<Vector, T>,
+               private IArithmeticOperations<Vector, T>,
+               private IGenericOperations<Vector, T> {
  private:
   size_t rows_{0UL};
   std::vector<T> data_;

@@ -1,5 +1,6 @@
+#include <array>
 #include <iostream>
-//#include <memory_resource>
+#include <memory_resource>
 #include <string>
 #include <type_traits>
 #include <variant>
@@ -170,66 +171,46 @@ int main() {
   document.emplace_back(document);
   draw(document, std::cout, 0);
 
-  // std::array<std::uint8_t, 3004> buffer{};
-  // std::pmr::monotonic_buffer_resource mem_resource(buffer.data(),
-  //                                                 buffer.size());
-
+  std::array<std::uint8_t, 3004> buffer{};
+  std::pmr::monotonic_buffer_resource mem_resource(buffer.data(),
+                                                   buffer.size());
   using shapes_t = vecVar_t<Rectangle, Triangle, Circle>;
 
-  // shapes_t shapes1(&mem_resource);
-  shapes_t shapes1{};
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Circle{.radius_ = 3.7});
-  shapes1.emplace_back(Circle{.radius_ = 3.7});
-  shapes1.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Circle{.radius_ = 3.7});
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Circle{.radius_ = 3.7});
-  shapes1.emplace_back(Circle{.radius_ = 3.7});
-  shapes1.emplace_back(Circle{.radius_ = 3.7});
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes1.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes_t shapes{Triangle{.width_ = 3.7, .height_ = 4.8},
-                  Rectangle{.width_ = 3.7, .height_ = 4.8},
-                  Circle{.radius_ = 3.7},
-                  Rectangle{.width_ = 3, .height_ = 4},
-                  Triangle{.width_ = 3, .height_ = 4},
-                  Circle{.radius_ = 9.7},
-                  Triangle{.width_ = 5, .height_ = 8}};
+  shapes_t shapes{&mem_resource};
+  shapes.reserve(buffer.size());
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Circle{.radius_ = 3.7});
+  shapes.emplace_back(Circle{.radius_ = 3.7});
+  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Circle{.radius_ = 3.7});
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Circle{.radius_ = 3.7});
+  shapes.emplace_back(Circle{.radius_ = 3.7});
+  shapes.emplace_back(Circle{.radius_ = 3.7});
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
 
-  auto resVec1 = GetArea(shapes1);
+  auto resVec1 = GetArea(shapes);
   for (auto&& item : resVec1) {
     std::cout << "resVec1: " << item << '\n';
   }
 
-  Scale(shapes1, 2);
+  Scale(shapes, 4);
 
-  auto resVec2 = GetArea(shapes1);
-  for (auto&& item : resVec2) {
+  resVec1 = GetArea(shapes);
+  for (auto&& item : resVec1) {
     std::cout << "resVecV2: " << item << '\n';
   }
 
-  /*std::pmr::vector<double> retVec2;
-  for (auto&& elem : shapes1) {
-    retVec2.emplace_back(std::visit(CallArea, elem));
-  }
-  for (auto&& item : retVec2) {
-    std::cout << "retVec2: " << item << '\n';
-  }
-
-  for (auto&& elem : shapes1) {
-    std::visit(CallScale, elem);
-  }
-*/
   return 0;
 }

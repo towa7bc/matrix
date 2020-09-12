@@ -8,14 +8,15 @@
 #include <cmath>
 #include <variant>
 #include <vector>
+//#include <memory_resource>
 
 class Rectangle {
  public:
   Rectangle(double width, double height) : width_(width), height_(height) {}
   [[nodiscard]] double area() const { return width_ * height_; }
-  bool isDay(int i) {
-    ++i;
-    return true;
+  void scale(std::size_t i) {
+    width_ *= i;
+    height_ *= i;
   }
 
  private:
@@ -27,7 +28,7 @@ class Triangle {
  public:
   Triangle(double width, double height) : width_(width), height_(height) {}
   [[nodiscard]] double area() const { return width_ * height_ / 2; }
-  bool isDay(int i) { return false; }
+  void scale(std::size_t i) { width_ *= i; }
 
  private:
   double width_{};
@@ -38,7 +39,7 @@ class Circle {
  public:
   explicit Circle(double radius) : radius_(radius) {}
   [[nodiscard]] double area() const { return M_PI * std::pow(radius_, 2); }
-  bool isDay(int i) { return false; }
+  void scale(std::size_t i) { radius_ *= i; }
 
  private:
   double radius_{};
@@ -55,32 +56,43 @@ template <typename T>
 concept Shape = requires(T t) {
   { t.area() }
   ->std::same_as<double>;
-  { t.isDay(int{}) }
-  ->std::same_as<bool>;
+  { t.scale(std::size_t{}) }
+  ->std::same_as<void>;
 };
 
-int gggggg{10};
+int gggggg{100};
 auto CallArea = [](Shape auto& obj) { return obj.area(); };
-auto CallIsDay = [i = gggggg](Shape auto& obj) { return obj.isDay(i); };
+auto CallScale = [i = gggggg](Shape auto& obj) { obj.scale(i); };
 
-template <Shape... S>
-using var = std::variant<S...>;
-template <Shape... S>
-using vecVar = std::vector<var<S...>>;
+template <Shape... Ss>
+using var_t = std::variant<Ss...>;
+template <Shape... Ss>
+using vecVar_t = std::vector<var_t<Ss...>>;
 
-template <Shape... S>
-double GetArea(var<S...> v) {
-  auto ret = std::visit(overloaded{[](S s) { return s.area(); }...}, v);
-  return ret;
+template <Shape... Ss>
+double GetArea(var_t<Ss...>& v) {
+  return std::visit(overloaded{[](Ss& s) { return s.area(); }...}, v);
 }
 
-template <Shape... S>
-std::vector<double> GetArea(vecVar<S...>& v) {
+template <Shape... Ss>
+std::vector<double> GetArea(vecVar_t<Ss...>& vec) {
   std::vector<double> retV;
-  for (auto&& elem : v) {
+  for (auto&& elem : vec) {
     retV.emplace_back(GetArea(elem));
   }
   return retV;
+}
+
+template <Shape... Ss>
+void Scale(var_t<Ss...>& v, std::size_t factor) {
+  std::visit(overloaded{[&](Ss& s) { s.scale(factor); }...}, v);
+}
+
+template <Shape... Ss>
+void Scale(vecVar_t<Ss...>& vec, std::size_t factor) {
+  for (auto&& elem : vec) {
+    Scale(elem, factor);
+  }
 }
 
 #endif  // MATRIX_STATICPOLY_HPP

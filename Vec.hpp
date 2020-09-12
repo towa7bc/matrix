@@ -6,13 +6,11 @@
 #define MATRIX_VEC_HPP
 
 #include <cassert>
-#include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <memory>
 #include <type_traits>
 #include <utility>
-#include <variant>
 #include <vector>
 
 ///// Expression Templates
@@ -255,80 +253,6 @@ struct french {};
 
 void draw(french const&, std::ostream& out, std::size_t position) {
   out << std::string(position, ' ') << "Bonjour!" << '\n';
-}
-
-template <typename... Ts>
-struct overloaded : Ts... {
-  using Ts::operator()...;
-};
-template <typename... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
-template <typename T>
-concept Shape = requires(T t) {
-  { t.area() }
-  ->std::same_as<double>;
-  { t.isGay(int{}) }
-  ->std::same_as<bool>;
-};
-
-int gggggg{10};
-auto CallArea = [](Shape auto& obj) { return obj.area(); };
-auto CallIsGay = [i = gggggg](Shape auto& obj) { return obj.isGay(i); };
-
-class Rectangle {
- public:
-  Rectangle(double width, double height) : width_(width), height_(height) {}
-  [[nodiscard]] double area() const { return width_ * height_; }
-  bool isGay(int i) {
-    ++i;
-    return true;
-  }
-
- private:
-  double width_{};
-  double height_{};
-};
-
-class Triangle {
- public:
-  Triangle(double width, double height) : width_(width), height_(height) {}
-  [[nodiscard]] double area() const { return width_ * height_ / 2; }
-  bool isGay(int i) { return false; }
-
- private:
-  double width_{};
-  double height_{};
-};
-
-class Circle {
- public:
-  explicit Circle(double radius) : radius_(radius) {}
-  [[nodiscard]] double area() const { return M_PI * std::pow(radius_, 2); }
-  bool isGay(int i) { return false; }
-
- private:
-  double radius_{};
-};
-
-template <Shape... S>
-using var = std::variant<S...>;
-template <Shape... S>
-using vecVar = std::vector<var<S...>>;
-
-template <Shape... S>
-double GetArea(var<S...> v) {
-  auto ret = std::visit(overloaded{[](S s) { return s.area(); }...}, v);
-  return ret;
-}
-
-template <Shape... S>
-std::vector<double> GetArea(vecVar<S...>& v) {
-  std::vector<double> retV;
-  for (auto&& elem : v) {
-    retV.emplace_back(GetArea(elem));
-  }
-  return retV;
 }
 
 #endif  // MATRIX_VEC_HPP

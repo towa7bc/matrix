@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Matrix.hpp"
+#include "StaticPoly.hpp"
 #include "Vec.hpp"
 #include "Vector.hpp"
 
@@ -168,8 +169,9 @@ int main() {
   document.emplace_back(document);
   draw(document, std::cout, 0);
 
-  vecVar<Rectangle, Triangle, Circle> vvv{Triangle{3.7, 4.8},
-                                          Rectangle{3.7, 4.8}, Circle{3.7}};
+  vecVar<Rectangle, Triangle, Circle> vvv{
+      Triangle{3.7, 4.8}, Rectangle{3.7, 4.8}, Circle{3.7},
+      Rectangle{3, 4},    Triangle{3, 4},      Triangle{5, 8}};
   auto resVec1 = GetArea(vvv);
   for (auto&& item : resVec1) {
     std::cout << "resVec1: " << item << '\n';
@@ -186,7 +188,7 @@ int main() {
   }
 
   for (auto&& elem : vvv) {
-    auto ret = std::visit(CallIsGay, elem);
+    auto ret = std::visit(CallIsDay, elem);
     retVec3.push_back(ret);
   }
   for (auto&& item : retVec3) {

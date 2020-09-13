@@ -76,6 +76,7 @@ constexpr std::pmr::vector<double> GetArea(vecVar_t<Ss...>& vec) {
   std::pmr::monotonic_buffer_resource mem_resource(buffer.data(),
                                                    buffer.size());
   std::pmr::vector<double> retV{&mem_resource};
+  retV.reserve(buffer.size());
   std::ranges::transform(
       vec, std::back_inserter(retV), [&](var_t<Ss...>& v) -> double {
         return std::visit(

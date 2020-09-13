@@ -72,10 +72,15 @@ using vecVar_t = std::pmr::vector<var_t<Ss...>>;
 
 template <Shape... Ss>
 constexpr std::pmr::vector<double> GetArea(vecVar_t<Ss...>& vec) {
-  std::pmr::vector<double> retV;
-  std::ranges::transform(vec, std::back_inserter(retV), [&](var_t<Ss...>& v) {
-    return std::visit(overloaded{[&](Ss& s) { return s.area(); }...}, v);
-  });
+  std::array<std::uint8_t, 3004> buffer{};
+  std::pmr::monotonic_buffer_resource mem_resource(buffer.data(),
+                                                   buffer.size());
+  std::pmr::vector<double> retV{&mem_resource};
+  std::ranges::transform(
+      vec, std::back_inserter(retV), [&](var_t<Ss...>& v) -> double {
+        return std::visit(
+            overloaded{[&](Ss& s) -> double { return s.area(); }...}, v);
+      });
   return retV;
 }
 

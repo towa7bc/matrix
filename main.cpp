@@ -176,29 +176,14 @@ int main() {
                                                    buffer.size());
   using shapes_t = vecVar_t<Rectangle, Triangle, Circle>;
 
-  shapes_t shapes{&mem_resource};
-  shapes.reserve(buffer.size());
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Circle{.radius_ = 3.7});
-  shapes.emplace_back(Circle{.radius_ = 3.7});
-  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Rectangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Circle{.radius_ = 3.7});
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Circle{.radius_ = 3.7});
-  shapes.emplace_back(Circle{.radius_ = 3.7});
-  shapes.emplace_back(Circle{.radius_ = 3.7});
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
-  shapes.emplace_back(Triangle{.width_ = 3.7, .height_ = 4.8});
+  shapes_t shapes{
+      {Triangle{.width_ = 3.7, .height_ = 4.8},
+       Rectangle{.width_ = 3.7, .height_ = 4.8},
+       Rectangle{.width_ = 3.7, .height_ = 4.8},
+       Rectangle{.width_ = 3.7, .height_ = 4.8}, Circle{.radius_ = 3.7},
+       Circle{.radius_ = 9.7}, Triangle{.width_ = 3.7, .height_ = 4.8},
+       Triangle{.width_ = 3.7, .height_ = 4.8}},
+      &mem_resource};
 
   auto resVec1 = GetArea(shapes);
   for (auto&& item : resVec1) {

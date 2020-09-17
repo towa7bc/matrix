@@ -99,7 +99,7 @@ int main() {
   auto res3 = mc1 * mc2 * (vec1 + vec2);
   res2 = m1 * (-5) * m2 * scalar;
   res4 = mc1 + mc2;
-  libMatrix::Matrix<float> m6 = libMatrix::Matrix<float>(res2);
+  auto m6 = res2;
   resVec = 2 * vec1 - vec2;
   res = vec1 * vec2;
   auto d = cross(std::move(crossVec), std::move(crossVec2));
@@ -197,5 +197,8 @@ int main() {
     std::cout << "resVecV2: " << item << '\n';
   }
 
+  for (auto&& shape : shapes) {
+    std::cout << "id: " << Get_Id(shape) << '\n';
+  }
   return 0;
 }

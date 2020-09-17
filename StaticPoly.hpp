@@ -6,48 +6,131 @@
 #define MATRIX_STATICPOLY_HPP
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <memory_resource>
+#include <numbers>
+#include <string>
+#include <type_traits>
 #include <variant>
 #include <vector>
 
 class Rectangle {
  public:
-  constexpr Rectangle(double width, double height)
-      : width_(width), height_(height) {}
+  using allocator_t = std::pmr::polymorphic_allocator<>;
+  Rectangle(double width, double height)
+      : Rectangle(width, height, allocator_t{}) {}
+  Rectangle(double width, double height, allocator_t alloc)
+      : width_(width),
+        height_(height),
+        id_("Bigggggggggggggggggggggggg Rectangle", alloc) {}
   [[nodiscard]] constexpr double area() const { return width_ * height_; }
   constexpr void scale(std::size_t i) {
-    width_ *= i;
-    height_ *= i;
+    width_ *= static_cast<double>(i);
+    height_ *= static_cast<double>(i);
   }
+
+  Rectangle(Rectangle const& other, allocator_t alloc)
+      : width_(other.width_), height_(other.height_), id_(other.id_, alloc) {}
+
+  Rectangle(Rectangle const&) = default;
+  Rectangle(Rectangle&&) noexcept = default;
+
+  Rectangle(Rectangle&& other, allocator_t alloc)
+      : width_(other.width_),
+        height_(other.height_),
+        id_(std::move(other.id_), alloc) {}
+
+  Rectangle& operator=(Rectangle const& rhs) = default;
+  Rectangle& operator=(Rectangle&& rhs) noexcept = default;
+
+  ~Rectangle() = default;
+
+  [[nodiscard]] allocator_t get_allocator() const {
+    return id_.get_allocator();
+  }
+
+  [[nodiscard]] std::pmr::string get_id() && { return std::move(id_); }
+  [[nodiscard]] const std::pmr::string& get_id() const& { return id_; }
 
  private:
   double width_{};
   double height_{};
+  std::pmr::string id_;
 };
 
 class Triangle {
  public:
-  constexpr Triangle(double width, double height)
-      : width_(width), height_(height) {}
+  using allocator_t = std::pmr::polymorphic_allocator<>;
+  Triangle(double width, double height)
+      : Triangle(width, height, allocator_t{}) {}
+  Triangle(double width, double height, allocator_t alloc)
+      : width_(width),
+        height_(height),
+        id_("Bigggggggggggggggggggggggg Triangle", alloc) {}
   [[nodiscard]] constexpr double area() const { return width_ * height_ / 2; }
-  constexpr void scale(std::size_t i) { width_ *= i; }
+  constexpr void scale(std::size_t i) { width_ *= static_cast<double>(i); }
+
+  Triangle(Triangle const& other, allocator_t alloc)
+      : width_(other.width_), height_(other.height_), id_(other.id_, alloc) {}
+
+  Triangle(Triangle const&) = default;
+  Triangle(Triangle&&) noexcept = default;
+
+  Triangle(Triangle&& other, allocator_t alloc)
+      : width_(other.width_),
+        height_(other.height_),
+        id_(std::move(other.id_), alloc) {}
+
+  Triangle& operator=(Triangle const& rhs) = default;
+  Triangle& operator=(Triangle&& rhs) noexcept = default;
+
+  ~Triangle() = default;
+
+  [[nodiscard]] allocator_t get_allocator() const {
+    return id_.get_allocator();
+  }
+
+  [[nodiscard]] std::pmr::string get_id() && { return std::move(id_); }
+  [[nodiscard]] const std::pmr::string& get_id() const& { return id_; }
 
  private:
   double width_{};
   double height_{};
+  std::pmr::string id_;
 };
 
 class Circle {
  public:
-  explicit constexpr Circle(double radius) : radius_(radius) {}
+  using allocator_t = std::pmr::polymorphic_allocator<>;
+  explicit Circle(double radius) : Circle(radius, allocator_t{}) {}
+  Circle(double radius, allocator_t alloc)
+      : radius_(radius), id_("Bigggggggggggggggggggggggg Circle", alloc) {}
   [[nodiscard]] constexpr double area() const {
-    return M_PI * std::pow(radius_, 2);
+    return std::numbers::pi * std::pow(radius_, 2);
   }
-  constexpr void scale(std::size_t i) { radius_ *= i; }
+  constexpr void scale(std::size_t i) { radius_ *= static_cast<double>(i); }
+
+  Circle(Circle const&) = default;
+  Circle(Circle&&) noexcept = default;
+
+  Circle(Circle&& other, allocator_t alloc)
+      : radius_(other.radius_), id_(std::move(other.id_), alloc) {}
+
+  Circle& operator=(Circle const& rhs) = default;
+  Circle& operator=(Circle&& rhs) noexcept = default;
+
+  ~Circle() = default;
+
+  [[nodiscard]] allocator_t get_allocator() const {
+    return id_.get_allocator();
+  }
+  [[nodiscard]] std::pmr::string get_id() && { return std::move(id_); }
+  [[nodiscard]] const std::pmr::string& get_id() const& { return id_; }
 
  private:
   double radius_{};
+  std::pmr::string id_;
 };
 
 template <typename... Ts>
@@ -90,6 +173,12 @@ constexpr void Scale(vecVar_t<Ss...>& vec, std::size_t factor) {
   std::ranges::for_each(vec, [&](var_t<Ss...>& v) {
     std::visit(overloaded{[&](Ss& s) { s.scale(factor); }...}, v);
   });
+}
+
+template <Shape... Ss>
+constexpr std::pmr::string Get_Id(var_t<Ss...>& v) {
+  return std::visit(
+      overloaded{[&](Ss& s) -> std::pmr::string { return s.get_id(); }...}, v);
 }
 
 #endif  // MATRIX_STATICPOLY_HPP

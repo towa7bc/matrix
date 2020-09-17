@@ -58,7 +58,7 @@ Arithmetic auto scalar_product(const Vector<T>& vector1,
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
   auto resultFuture = std::async(std::launch::async, [&]() {
-    Arithmetic auto result{0};
+    Arithmetic auto result{0.0f};
     for (size_t i{0UL}; i < vector1.size(); ++i) {
       result += vector1(i) * vector2(i);
     }

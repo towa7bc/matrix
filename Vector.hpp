@@ -21,8 +21,8 @@ class Vector : private IEqualityComparable<Vector, T>,
                private IArithmeticOperations<Vector, T>,
                private IGenericOperations<Vector, T> {
  private:
-  size_t rows_{0UL};
   std::vector<T> data_;
+  size_t rows_{0UL};
 
  public:
   explicit Vector(size_t rows) : rows_(rows) {
@@ -53,7 +53,7 @@ class Vector : private IEqualityComparable<Vector, T>,
     return data_[row];
   }
 
-  [[nodiscard]] int size() const { return rows_; }
+  [[nodiscard]] size_t size() const { return rows_; }
 
   void swap(Vector& rhs) noexcept {
     using std::swap;

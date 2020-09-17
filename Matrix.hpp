@@ -19,8 +19,8 @@ class Matrix : private IEqualityComparable<Matrix, T>,
                private IMixedArithmeticOperations<Matrix, Vector, T>,
                private IGenericOperations<Matrix, T> {
  private:
-  size_t rows_{0UL}, cols_{0UL};
   std::vector<T> data_;
+  size_t rows_{0UL}, cols_{0UL};
 
  public:
   explicit Matrix(size_t rows, size_t cols) : rows_(rows), cols_(cols) {
@@ -55,9 +55,9 @@ class Matrix : private IEqualityComparable<Matrix, T>,
     return (row < rows_ && col < cols_);
   }
 
-  [[nodiscard]] int size() const { return rows_ * cols_; }
-  [[nodiscard]] int rows() const { return rows_; }
-  [[nodiscard]] int cols() const { return cols_; }
+  [[nodiscard]] size_t size() const { return rows_ * cols_; }
+  [[nodiscard]] size_t rows() const { return rows_; }
+  [[nodiscard]] size_t cols() const { return cols_; }
 
   void swap(Matrix& rhs) noexcept {
     using std::swap;

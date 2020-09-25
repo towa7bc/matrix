@@ -25,9 +25,9 @@ class Rectangle {
         height_(height),
         id_("Bigggggggggggggggggggggggg Rectangle", alloc) {}
   [[nodiscard]] constexpr double area() const { return width_ * height_; }
-  constexpr void scale(std::size_t i) {
-    width_ *= static_cast<double>(i);
-    height_ *= static_cast<double>(i);
+  constexpr void scale(double i) {
+    width_ *= i;
+    height_ *= i;
   }
 
   Rectangle(Rectangle const& other, allocator_t alloc)
@@ -69,7 +69,7 @@ class Triangle {
         height_(height),
         id_("Bigggggggggggggggggggggggg Triangle", alloc) {}
   [[nodiscard]] constexpr double area() const { return width_ * height_ / 2; }
-  constexpr void scale(std::size_t i) { width_ *= static_cast<double>(i); }
+  constexpr void scale(double i) { width_ *= i; }
 
   Triangle(Triangle const& other, allocator_t alloc)
       : width_(other.width_), height_(other.height_), id_(other.id_, alloc) {}
@@ -109,7 +109,7 @@ class Circle {
   [[nodiscard]] constexpr double area() const {
     return std::numbers::pi * std::pow(radius_, 2);
   }
-  constexpr void scale(std::size_t i) { radius_ *= static_cast<double>(i); }
+  constexpr void scale(double i) { radius_ *= i; }
 
   Circle(Circle const&) = default;
   Circle(Circle&&) noexcept = default;
@@ -144,7 +144,7 @@ template <typename S>
 concept Shape = requires(S s) {
   { s.area() }
   ->std::same_as<double>;
-  { s.scale(std::size_t{}) }
+  { s.scale(double{}) }
   ->std::same_as<void>;
 };
 
@@ -169,7 +169,7 @@ constexpr std::pmr::vector<double> GetArea(vecVar_t<Ss...>& vec) {
 }
 
 template <Shape... Ss>
-constexpr void Scale(vecVar_t<Ss...>& vec, std::size_t factor) {
+constexpr void Scale(vecVar_t<Ss...>& vec, double factor) {
   std::ranges::for_each(vec, [&](var_t<Ss...>& v) {
     std::visit(overloaded{[&](Ss& s) { s.scale(factor); }...}, v);
   });

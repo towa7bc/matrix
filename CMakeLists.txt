@@ -12,6 +12,9 @@ target_compile_features(project_options INTERFACE cxx_std_20)
 include(cmake/Sanitizers.cmake)
 enable_sanitizers(project_options)
 
+include(cmake/Conan.cmake)
+run_conan()
+
 add_executable(matrix
         Vector.hpp
         Matrix.hpp
@@ -23,4 +26,5 @@ target_link_libraries(
         PRIVATE
         project_warnings
         project_options
+        CONAN_PKG::fmt
 )

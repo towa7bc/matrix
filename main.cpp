@@ -171,6 +171,13 @@ int main() {
   document.emplace_back(document);
   draw(document, std::cout, 0);
 
+  libMatrix::Vector<double> fmt_1(3);
+  fmt_1(0) = 1;
+  fmt_1(1) = 4;
+  fmt_1(2) = 7.2;
+
+  fmt::print(fmt::format("{:}", fmt_1));
+
   std::array<std::uint8_t, 3004> buffer{};
   std::pmr::monotonic_buffer_resource mem_resource(buffer.data(),
                                                    buffer.size());
@@ -186,6 +193,7 @@ int main() {
       &mem_resource};
 
   auto resVec1 = GetArea(shapes);
+
   for (auto&& item : resVec1) {
     std::cout << "resVec1: " << item << '\n';
   }

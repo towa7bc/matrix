@@ -1,6 +1,8 @@
 #ifndef MATRIX_VECTOR_HPP
 #define MATRIX_VECTOR_HPP
 
+#include <fmt/format.h>
+
 #include <concepts>
 #include <exception>
 #include <future>
@@ -54,6 +56,7 @@ class Vector : private IEqualityComparable<Vector, T>,
   }
 
   [[nodiscard]] size_t size() const { return rows_; }
+  [[nodiscard]] auto data() const { return data_; }
 
   void swap(Vector& rhs) noexcept {
     using std::swap;
@@ -63,5 +66,35 @@ class Vector : private IEqualityComparable<Vector, T>,
 };
 
 }  // namespace libMatrix::inline v1
+
+template <typename T>
+struct fmt::formatter<libMatrix::Vector<T>> {
+  constexpr auto parse(format_parse_context& ctx) {
+    value_format_ = "{:";
+    for (const auto* it = ctx.begin(); it != ctx.end(); ++it) {
+      char c = *it;
+      value_format_ += c;
+      if (c == '}') {
+        return it;
+      }
+    }
+    return ctx.end();
+  }
+
+  template <typename FormatContext>
+  auto format(libMatrix::Vector<T> const& v, FormatContext& ctx) {
+    auto&& out = ctx.out();
+    format_to(out, "[");
+    if (v.size() > 0) {
+      format_to(out, value_format_, v(0));
+    }
+    for (std::size_t i{1}; i < v.size(); ++i) {
+      format_to(out, ", " + value_format_, v(i));
+    }
+    return format_to(out, "]");
+  }
+
+  std::string value_format_;
+};
 
 #endif  // MATRIX_VECTOR_HPP

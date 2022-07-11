@@ -19,7 +19,7 @@ add_executable(matrix
         Vector.hpp
         Matrix.hpp
         main.cpp
-        Vec.hpp MatrixHelperFunctions.hpp VectorHelperFunctions.hpp Interfaces.hpp StaticPoly.hpp)
+        MatrixHelperFunctions.hpp VectorHelperFunctions.hpp Interfaces.hpp)
 
 target_link_libraries(
         matrix

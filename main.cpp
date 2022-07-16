@@ -4,23 +4,24 @@
 #include "Vector.hpp"
 
 using Matrixf = libMatrix::Matrix<float>;
+using Vectorf = libMatrix::Vector<float>;
+using Vectord = libMatrix::Vector<double>;
 
 int main() {
   Matrixf m1{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 3, 4};
-  libMatrix::Matrix<float> m2({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 4, 3);
-  libMatrix::Matrix<float> res1(2, 2);
-  libMatrix::Matrix<float> res2{3, 3};
-  libMatrix::Matrix<float> mc1(2, 2);
-  libMatrix::Matrix<float> mc2(2, 2);
-  libMatrix::Matrix<float> res4(2, 2);
-
-  libMatrix::Vector<float> vec1{1, 2};
-  libMatrix::Vector<float> vec2(2);
-  libMatrix::Vector<float> resVec(2);
-  libMatrix::Vector<float> crossVec(3);
-  libMatrix::Vector<float> crossVec2(3);
-//  float res{0};
-//  float scalar{2};
+  Matrixf m2({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, 4, 3);
+  Matrixf res1(2, 2);
+  Matrixf res2{3, 3};
+  Matrixf mc1(2, 2);
+  Matrixf mc2(2, 2);
+  Matrixf res4(2, 2);
+  Vectorf vec1{1, 2};
+  Vectorf vec2(2);
+  Vectorf resVec(2);
+  Vectorf crossVec(3);
+  Vectorf crossVec2(3);
+  float res{0};
+  float scalar{2};
   mc1(0, 0) = 1;
   mc1(0, 1) = 1;
   mc1(1, 0) = 3;
@@ -40,25 +41,24 @@ int main() {
   crossVec2(0) = 1;
   crossVec2(1) = 3;
   crossVec2(2) = 10;
-  //auto res3 = mc1 * mc2 * (vec1 + vec2);
-  //res2 = m1 * (-5) * m2 * scalar;
-  //res4 = mc1 + mc2;
-  //auto m6 = res2;
-  //resVec = 2 * vec1 - vec2;
-  //res = vec1 * vec2;
-  //auto d = cross(std::move(crossVec), std::move(crossVec2));
-  // std::cout << std::move(res3) << '\n';
-  //std::cout << res3 << '\n';
-  //std::cout << res2 << '\n';
-  //std::cout << resVec << '\n';
-  //std::cout << res << '\n';
-  //std::cout << d << '\n';
-  //std::cout << m6 << '\n';
-  //std::cout << res4 << '\n';
+  auto res3 = mc1 * mc2 * (vec1 + vec2);
+  res2 = m1 * (-5) * m2 * scalar;
+  res4 = mc1 + mc2;
+  auto m6 = res2;
+  resVec = 2 * vec1 - vec2;
+  res = vec1 * vec2;
+  auto d = cross(std::move(crossVec), std::move(crossVec2));
+  std::cout << res3 << '\n';
+  std::cout << res2 << '\n';
+  std::cout << resVec << '\n';
+  std::cout << res << '\n';
+  std::cout << d << '\n';
+  std::cout << m6 << '\n';
+  std::cout << res4 << '\n';
   std::cout << equ << '\n';
   std::cout << equ2 << '\n';
 
-  libMatrix::Vector<double> fmt_1(3);
+  Vectord fmt_1(3);
   fmt_1(0) = 1;
   fmt_1(1) = 4;
   fmt_1(2) = 7.2;

@@ -3,7 +3,6 @@
 
 #include <concepts>
 #include <exception>
-#include <future>
 #include <iostream>
 #include <type_traits>
 
@@ -23,14 +22,11 @@ Vector<T> calc_cross(const Vector<T>& v1, const Vector<T>& v2) {
     throw BadDimensionException(
         "Vector cross product is only defined in 3 dimensions.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Vector<T> result(3);
-    result(0) = v1(1) * v2(2) - v1(2) * v2(1);
-    result(1) = -(v1(0) * v2(2) - v1(2) * v2(0));
-    result(2) = v1(0) * v2(1) - v1(1) * v2(0);
-    return result;
-  });
-  return resultFuture.get();
+  Vector<T> result(3);
+  result(0) = v1(1) * v2(2) - v1(2) * v2(1);
+  result(1) = -(v1(0) * v2(2) - v1(2) * v2(0));
+  result(2) = v1(0) * v2(1) - v1(1) * v2(0);
+  return result;
 }
 
 template <Arithmetic T>
@@ -57,14 +53,11 @@ Arithmetic auto scalar_product(const Vector<T>& vector1,
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Arithmetic auto result{0.0f};
-    for (size_t i{0UL}; i < vector1.size(); ++i) {
-      result += vector1(i) * vector2(i);
-    }
-    return result;
-  });
-  return resultFuture.get();
+  Arithmetic auto result{0.0f};
+  for (size_t i{0UL}; i < vector1.size(); ++i) {
+    result += vector1(i) * vector2(i);
+  }
+  return result;
 }
 
 template <Arithmetic T>
@@ -72,14 +65,11 @@ Vector<T> subtract_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Vector<T> result(vector1.size());
-    for (size_t i{0UL}; i < vector1.size(); ++i) {
-      result(i) = vector1(i) - vector2(i);
-    }
-    return result;
-  });
-  return resultFuture.get();
+  Vector<T> result(vector1.size());
+  for (size_t i{0UL}; i < vector1.size(); ++i) {
+    result(i) = vector1(i) - vector2(i);
+  }
+  return result;
 }
 
 template <Arithmetic T>
@@ -87,14 +77,11 @@ Vector<T> add_vectors(const Vector<T>& vector1, const Vector<T>& vector2) {
   if (vector1.size() != vector2.size()) {
     throw BadDimensionException("The vector dimensions have to be the same.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Vector<T> result(vector1.size());
-    for (size_t i{0UL}; i < vector1.size(); ++i) {
-      result(i) = vector1(i) + vector2(i);
-    }
-    return result;
-  });
-  return resultFuture.get();
+  Vector<T> result(vector1.size());
+  for (size_t i{0UL}; i < vector1.size(); ++i) {
+    result(i) = vector1(i) + vector2(i);
+  }
+  return result;
 }
 
 template <Arithmetic T>

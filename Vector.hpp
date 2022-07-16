@@ -5,7 +5,6 @@
 
 #include <concepts>
 #include <exception>
-#include <future>
 #include <iostream>
 #include <string>
 #include <type_traits>

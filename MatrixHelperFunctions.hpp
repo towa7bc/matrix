@@ -5,7 +5,6 @@
 #include <iostream>
 #include <concepts>
 #include <exception>
-#include <future>
 
 namespace libMatrix::inline v1 {
 
@@ -27,16 +26,13 @@ Matrix<T> subtract_matrices(const Matrix<T>& matrix1,
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Matrix<T> result(matrix1.rows(), matrix1.cols());
-    for (size_t i{0UL}; i < matrix1.rows(); ++i) {
-      for (size_t j{0UL}; j < matrix1.cols(); ++j) {
-        result(i, j) = matrix1(i, j) - matrix2(i, j);
-      }
+  Matrix<T> result(matrix1.rows(), matrix1.cols());
+  for (size_t i{0UL}; i < matrix1.rows(); ++i) {
+    for (size_t j{0UL}; j < matrix1.cols(); ++j) {
+      result(i, j) = matrix1(i, j) - matrix2(i, j);
     }
-    return result;
-  });
-  return resultFuture.get();
+  }
+  return result;
 }
 
 template <Arithmetic T>
@@ -44,16 +40,13 @@ Matrix<T> add_matrices(const Matrix<T>& matrix1, const Matrix<T>& matrix2) {
   if (matrix1.cols() != matrix2.cols() || matrix1.rows() != matrix2.rows()) {
     throw BadDimensionException("The matrix dimensions have to be the same.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Matrix<T> result(matrix1.rows(), matrix1.cols());
-    for (size_t i{0UL}; i < matrix1.rows(); ++i) {
-      for (size_t j{0UL}; j < matrix1.cols(); ++j) {
-        result(i, j) = matrix1(i, j) + matrix2(i, j);
-      }
+  Matrix<T> result(matrix1.rows(), matrix1.cols());
+  for (size_t i{0UL}; i < matrix1.rows(); ++i) {
+    for (size_t j{0UL}; j < matrix1.cols(); ++j) {
+      result(i, j) = matrix1(i, j) + matrix2(i, j);
     }
-    return result;
-  });
-  return resultFuture.get();
+  }
+  return result;
 }
 
 template <Arithmetic T>
@@ -83,16 +76,13 @@ Vector<T> multiply_matrix_vector(const Matrix<T>& matrix,
     throw BadDimensionException(
         "matrix.cols has to be the same as the vector dimension.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Vector<T> result(vector.size());
-    for (size_t i{0UL}; i < matrix.rows(); ++i) {
-      for (size_t j{0UL}; j < matrix.cols(); ++j) {
-        result(i) += matrix(i, j) * vector(j);
-      }
+  Vector<T> result(vector.size());
+  for (size_t i{0UL}; i < matrix.rows(); ++i) {
+    for (size_t j{0UL}; j < matrix.cols(); ++j) {
+      result(i) += matrix(i, j) * vector(j);
     }
-    return result;
-  });
-  return resultFuture.get();
+  }
+  return result;
 }
 
 template <Arithmetic T>
@@ -102,16 +92,13 @@ Vector<T> multiply_matrix_transposed_vector(const Vector<T>& vector,
     throw BadDimensionException(
         "matrix.rows has to be the same as the vector dimension.");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Vector<T> result(vector.size());
-    for (size_t i{0UL}; i < matrix.rows(); ++i) {
-      for (size_t j{0UL}; j < matrix.cols(); ++j) {
-        result(i) += vector(i) * matrix(i, j);
-      }
+  Vector<T> result(vector.size());
+  for (size_t i{0UL}; i < matrix.rows(); ++i) {
+    for (size_t j{0UL}; j < matrix.cols(); ++j) {
+      result(i) += vector(i) * matrix(i, j);
     }
-    return result;
-  });
-  return resultFuture.get();
+  }
+  return result;
 }
 
 template <Arithmetic T>
@@ -121,18 +108,15 @@ Matrix<T> multiply_matrices(const Matrix<T>& matrix1,
     throw BadDimensionException(
         "matrix1.cols has to be the same as matrix2.rows");
   }
-  auto resultFuture = std::async(std::launch::async, [&]() {
-    Matrix<T> result(matrix1.rows(), matrix2.cols());
-    for (size_t i{0UL}; i < matrix1.rows(); ++i) {
-      for (size_t j{0UL}; j < matrix2.cols(); ++j) {
-        for (size_t k{0UL}; k < matrix1.cols(); ++k) {
-          result(i, j) += matrix1(i, k) * matrix2(k, j);
-        }
+  Matrix<T> result(matrix1.rows(), matrix2.cols());
+  for (size_t i{0UL}; i < matrix1.rows(); ++i) {
+    for (size_t j{0UL}; j < matrix2.cols(); ++j) {
+      for (size_t k{0UL}; k < matrix1.cols(); ++k) {
+        result(i, j) += matrix1(i, k) * matrix2(k, j);
       }
     }
-    return result;
-  });
-  return resultFuture.get();
+  }
+  return result;
 }
 
 template <Arithmetic T>

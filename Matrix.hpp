@@ -2,7 +2,6 @@
 #define MATRIX_MATRIX_HPP
 
 #include <exception>
-#include <future>
 #include <iostream>
 #include <type_traits>
 #include <vector>
